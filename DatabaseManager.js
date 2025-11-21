@@ -55,6 +55,7 @@ class DatabaseManager {
     if (typeof identifier === 'number') {
         sql = "SELECT UserID, Username, Bio FROM Users WHERE UserID = ?";
         params = [identifier];
+    } else if (typeof identifier === 'string') {
         sql = "SELECT UserID, Username, Bio, Password FROM Users WHERE Username = ?"; 
         params = [identifier];
     } else {
