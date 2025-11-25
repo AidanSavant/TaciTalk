@@ -1,0 +1,1 @@
+const databaseMngr = require("DatabaseManager")
