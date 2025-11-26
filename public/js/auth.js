@@ -67,7 +67,7 @@ registerBtn.addEventListener("submit", async (e) => {
     const confirmedPassword = document.getElementById("register-password-confirm").value; 
     
     if(password !== confirmedPassword) {
-        registerError.textContent = "Passwords do not match";
+        registerError.textContent = "Passwords do not match!";
         return;
     }
 
