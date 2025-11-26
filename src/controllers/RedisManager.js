@@ -17,27 +17,40 @@ redisClient.on("error", (err) => console.log("REDIS Failed ", err));
 
 await redisClient.connect();
 
-console.log("Connected to redis")
-createMessage(2,148, "I'll give it to someone special")
-console.log("TEST FINAL")
-//let getNewMsg = await redisClient.get("2:148")
-//console.log(getNewMsg.toString())
+console.log("Connected to redis");
 
-
-
-async function createMessage(ConversationID, userID, messageContent){
-  let msgID = ConversationID.toString()+"-"+userID.toString()
-  let newmsg = await redisClient.rPush(msgID,messageContent)
-  console.log("GFIDSAFO")
-  for (let i = 0; i < parseInt(newmsg.toString()); i++){
-    console.log(newmsg[i])
-  }
-  let reteP = await redisClient.lRange(msgID, 0, -1);
-  console.log(reteP)
-  console.log(newmsg.length)
-  console.log("FINISHED")
+function getMsgID(userID,conversationID){
+  return conversationID.toString() + "-" + userID.toString();
 }
 
-async function deleteMessage(messageID){
+async function createMessage(userID, conversationID, messageContent){
+  let msgID = getMsgID(userID,conversationID);
+  let newmsg = await redisClient.rPush(msgID, messageContent);
+}
 
+async function deleteMessage(userID,conversationID){
+  let msgID = getMsgID(userID,conversationID);
+  redisClient.del(msgID);
+}
+
+async function getUserLogs(userID,conversationID){
+  let msgID = getMsgID(userID,conversationID);
+  return await redisClient.lRange(msgID, 0, -1);
+}
+
+async function getMessageFromIndex(userID,conversationID,index){
+  let msgID = getMsgID(userID,conversationID);
+  let message = await redisClient.lIndex(msgID, index);
+  return message;
+}
+
+async function getUserMessageCount(userID,conversationID){
+  let msgID = getMsgID(userID,conversationID);
+  let messages = await redisClient.lLen(msgID);
+  return messages;
+}
+
+async function editMessage(userID,conversationID,index,messageContent){
+  let msgID = getMsgID(userID,conversationID);
+  await redisClient.lSet(msgID,index,messageContent)
 }
