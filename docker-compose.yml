@@ -1,0 +1,16 @@
+version: "3.8"
+services:
+  mysql_db:
+    image: mysql:8.0
+    container_name: tacitalk_db
+    restart: always
+    ports:
+      - "${DB_PORT}:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASS}
+      MYSQL_DATABASE: ${DATABASE}
+    volumes:
+      - db_data:/var/lib/mysql
+
+volumes:
+  db_data:
