@@ -1,11 +1,17 @@
-const mysql = require("mysql2/promise");
+require("dotenv").config();
+
+const host = process.env.DB_HOST;
+const user = process.env.DB_USER;
+const password = process.env.DB_PASS;
+const database = process.env.DATABASE;
+const port = process.env.DB_PORT;
 
 const dbConfig = {
-  host: process.env.DB_HOST || "localhost",
-  port: process.env.DB_PORT || 3306,
-  user: proocess.env.DB_USER || "root",
-  password: process.env.DB_PASS || "",
-  database: process.env.DATABASE || "TaciTalk",
+  host,
+  user,
+  password,
+  database,
+  port,
   waitForConnections: true,
   connectionLimit: 10,
   queueLimit: 0,
@@ -32,13 +38,11 @@ class DatabaseManager {
       return results;
     } catch (error) {
       console.error("Database Query Error:", error.message);
-      throw new Error("Database operation failed: " + error.message); 
+      throw new Error("Database operation failed: " + error.message);
     }
   }
 
-  
   //USERS CRUD
-  
 
   //Create a new User
   async createUser(username, passwordHash, bio) {
@@ -46,20 +50,22 @@ class DatabaseManager {
     const params = [username, passwordHash, bio];
     const results = await this.executeQuery(sql, params);
     // Return the ID of the newly inserted user
-    return results.insertId; 
+    return results.insertId;
   }
 
-  
   async getUser(identifier) {
     let sql, params;
-    if (typeof identifier === 'number') {
-        sql = "SELECT UserID, Username, Bio FROM Users WHERE UserID = ?";
-        params = [identifier];
-    } else if (typeof identifier === 'string') {
-        sql = "SELECT UserID, Username, Bio, Password FROM Users WHERE Username = ?"; 
-        params = [identifier];
+    if (typeof identifier === "number") {
+      sql = "SELECT UserID, Username, Bio FROM Users WHERE UserID = ?";
+      params = [identifier];
+    } else if (typeof identifier === "string") {
+      sql =
+        "SELECT UserID, Username, Bio, Password FROM Users WHERE Username = ?";
+      params = [identifier];
     } else {
-        throw new Error("Invalid identifier for getUser. Must be UserID (number) or Username (string).");
+      throw new Error(
+        "Invalid identifier for getUser. Must be UserID (number) or Username (string).",
+      );
     }
     const results = await this.executeQuery(sql, params);
     return results[0] || null; // Return the user object or null if not found
@@ -78,18 +84,17 @@ class DatabaseManager {
     const sql = "DELETE FROM Users WHERE UserID = ?";
     const params = [userID];
     const results = await this.executeQuery(sql, params);
-    return results.affectedRows; 
+    return results.affectedRows;
   }
 
-  
   //CONVERSATIONS CRUD
-  
-  
+
   //Create a new Conversation
   async createConversation(title, type, createdBy) {
     const now = new Date();
     // Use NOW() in SQL for server-side time
-    const sql = "INSERT INTO Conversations (ConvoTitle, ConvoType, LastMessage, CreatedBy, LastUpdatedAt) VALUES (?, ?, NOW(), ?, NOW())"; 
+    const sql =
+      "INSERT INTO Conversations (ConvoTitle, ConvoType, LastMessage, CreatedBy, LastUpdatedAt) VALUES (?, ?, NOW(), ?, NOW())";
     const params = [title, type, createdBy];
     const results = await this.executeQuery(sql, params);
     return results.insertId;
@@ -104,7 +109,11 @@ class DatabaseManager {
   }
 
   //Update Conversation Title and Last Update Time
-  async updateConversation(conversationID, newTitle, updateLastMessage = false) {
+  async updateConversation(
+    conversationID,
+    newTitle,
+    updateLastMessage = false,
+  ) {
     let sql = "UPDATE Conversations SET ConvoTitle = ?, LastUpdatedAt = NOW()";
     const params = [newTitle, conversationID];
     if (updateLastMessage) {
@@ -124,18 +133,17 @@ class DatabaseManager {
     return results.affectedRows;
   }
 
-  
   //MESSAGES CRUD
- 
 
   //Create a new Message
   async createMessage(conversationID, userID, messageType) {
-    const sql = "INSERT INTO Messages (timeSent, MessageType, SavedAt, ConversationID, UserID) VALUES (NOW(), ?, NOW(), ?, ?)";
+    const sql =
+      "INSERT INTO Messages (timeSent, MessageType, SavedAt, ConversationID, UserID) VALUES (NOW(), ?, NOW(), ?, ?)";
     const params = [messageType, conversationID, userID];
     const results = await this.executeQuery(sql, params);
     return results.insertId;
   }
-  
+
   // Read Messages for a Conversation
   async getConversationMessages(conversationID, limit = 50, offset = 0) {
     const sql = `SELECT * FROM Messages WHERE ConversationID = ? ORDER BY timeSent DESC LIMIT ? OFFSET ?`;
@@ -152,15 +160,15 @@ class DatabaseManager {
     return results.affectedRows;
   }
 
-
   //FRIENDSHIPS CRUD
-    
+
   //Create/Update a Friendship status (Pending, Friends, Blocked)
   async setFriendshipStatus(user1ID, user2ID, status) {
-    const [id1, id2] = user1ID < user2ID ? [user1ID, user2ID] : [user2ID, user1ID]; 
+    const [id1, id2] =
+      user1ID < user2ID ? [user1ID, user2ID] : [user2ID, user1ID];
 
     const sql = `
-      INSERT INTO FriendShips (User1ID, User2ID, CurrentStatus) 
+      INSERT INTO FriendShips (User1ID, User2ID, CurrentStatus)
       VALUES (?, ?, ?)
       ON DUPLICATE KEY UPDATE CurrentStatus = ?
     `;
@@ -171,17 +179,19 @@ class DatabaseManager {
 
   //Read a specific Friendship status
   async getFriendshipStatus(user1ID, user2ID) {
-    const [id1, id2] = user1ID < user2ID ? [user1ID, user2ID] : [user2ID, user1ID];
-    const sql = "SELECT CurrentStatus FROM FriendShips WHERE User1ID = ? AND User2ID = ?";
+    const [id1, id2] =
+      user1ID < user2ID ? [user1ID, user2ID] : [user2ID, user1ID];
+    const sql =
+      "SELECT CurrentStatus FROM FriendShips WHERE User1ID = ? AND User2ID = ?";
     const params = [id1, id2];
     const results = await this.executeQuery(sql, params);
-    return results[0] ? results[0].CurrentStatus : 'None';
+    return results[0] ? results[0].CurrentStatus : "None";
   }
 
   //Read all Friendships/Requests for a User
   async getUserFriendships(userID) {
     const sql = `
-      SELECT 
+      SELECT
         CASE WHEN User1ID = ? THEN User2ID ELSE User1ID END AS FriendID,
         CurrentStatus
       FROM FriendShips
@@ -193,20 +203,20 @@ class DatabaseManager {
 
   // Delete a Friendship (Unfriend or Remove Block)
   async deleteFriendship(user1ID, user2ID) {
-    const [id1, id2] = user1ID < user2ID ? [user1ID, user2ID] : [user2ID, user1ID];
+    const [id1, id2] =
+      user1ID < user2ID ? [user1ID, user2ID] : [user2ID, user1ID];
     const sql = "DELETE FROM FriendShips WHERE User1ID = ? AND User2ID = ?";
     const params = [id1, id2];
     const results = await this.executeQuery(sql, params);
     return results.affectedRows;
   }
 
-  
   //CONVERSATIONMEMBERS CRUD
-
 
   //Add a User to a Conversation
   async addConversationMember(conversationID, userID) {
-    const sql = "INSERT INTO ConversationMembers (ConversationID, UserID) VALUES (?, ?)";
+    const sql =
+      "INSERT INTO ConversationMembers (ConversationID, UserID) VALUES (?, ?)";
     const params = [conversationID, userID];
     const results = await this.executeQuery(sql, params);
     return results.affectedRows;
@@ -214,14 +224,16 @@ class DatabaseManager {
 
   // Get all members of a Conversation
   async getConversationMembers(conversationID) {
-    const sql = "SELECT Users.UserID, Users.Username FROM ConversationMembers JOIN Users ON ConversationMembers.UserID = Users.UserID WHERE ConversationID = ?";
+    const sql =
+      "SELECT Users.UserID, Users.Username FROM ConversationMembers JOIN Users ON ConversationMembers.UserID = Users.UserID WHERE ConversationID = ?";
     const params = [conversationID];
     return await this.executeQuery(sql, params);
   }
 
   // Remove a User from a Conversation
   async removeConversationMember(conversationID, userID) {
-    const sql = "DELETE FROM ConversationMembers WHERE ConversationID = ? AND UserID = ?";
+    const sql =
+      "DELETE FROM ConversationMembers WHERE ConversationID = ? AND UserID = ?";
     const params = [conversationID, userID];
     const results = await this.executeQuery(sql, params);
     return results.affectedRows;
@@ -229,8 +241,3 @@ class DatabaseManager {
 }
 
 module.exports = DatabaseManager;
-
-
-
-
-
