@@ -1,11 +1,11 @@
 const mysql = require("mysql2/promise");
 
 const dbConfig = {
-  host: "localhost",
-  port: 3306,
-  user: "root",
-  password: "penguin",
-  database: "TaciTalk",
+  host: process.env.DB_HOST || "localhost",
+  port: process.env.DB_PORT || 3306,
+  user: proocess.env.DB_USER || "root",
+  password: process.env.DB_PASS || "",
+  database: process.env.DATABASE || "TaciTalk",
   waitForConnections: true,
   connectionLimit: 10,
   queueLimit: 0,
