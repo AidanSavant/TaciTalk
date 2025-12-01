@@ -8,6 +8,7 @@ module.exports = {
 };
 
 async function register(req, res) {
+    console.log(req.body)
     const { username, password } = req.body;
     
     if(!username || !password) {
@@ -20,9 +21,16 @@ async function register(req, res) {
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
-    await db.createUser({ username, password: hashedPassword });
-    
-    res.status(201).json({ message: "User registered successfully!", success: true });
+    await db.createUser(username, hashedPassword, "");
+    // fetch the created user to build a token
+    const created = await db.getUser(username);
+    const token = jwt.sign(
+        { userId: created.UserID, username: created.Username },
+        process.env.JWT_SECRET,
+        { expiresIn: "1h" }
+    );
+
+    res.status(201).json({ message: "User registered successfully!", token });
 }
 
 async function login(req, res) {

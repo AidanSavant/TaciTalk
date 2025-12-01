@@ -19,10 +19,10 @@ showLoginLink.addEventListener("click", () => {
     loginForm.classList.remove("hidden");
 });
 
-const loginBtn = document.getElementById("login-btn");
+const loginFormEl = loginForm.querySelector("form");
 const loginError = document.getElementById("login-error");
 
-loginBtn.addEventListener("submit", async (e) => {
+loginFormEl.addEventListener("submit", async (e) => {
     e.preventDefault();
 
     const username = document.getElementById("login-username").value;
@@ -43,6 +43,8 @@ loginBtn.addEventListener("submit", async (e) => {
 
         if (response.ok) {
             localStorage.setItem("token", data.token);
+            // set token cookie so the server can read it on protected routes
+            document.cookie = `token=${data.token}; path=/; max-age=3600; samesite=lax`;
             window.location.href = "/dashboard";
         } 
         else {
@@ -55,11 +57,10 @@ loginBtn.addEventListener("submit", async (e) => {
     }
 });
 
-
-const registerBtn = document.getElementById("register-btn");
+const registerFormEl = registerForm.querySelector("form");
 const registerError = document.getElementById("register-error");
 
-registerBtn.addEventListener("submit", async (e) => {
+registerFormEl.addEventListener("submit", async (e) => {
     e.preventDefault();
     
     const username = document.getElementById("register-username").value;
@@ -67,7 +68,6 @@ registerBtn.addEventListener("submit", async (e) => {
     const confirmedPassword = document.getElementById("register-password-confirm").value; 
     
     if(password !== confirmedPassword) {
-        registerError.textContent = "Passwords do not match!";
         return;
     }
 
@@ -79,13 +79,15 @@ registerBtn.addEventListener("submit", async (e) => {
             headers: {
                 "Content-Type": "application/json",
             },
-            body: JSON.stringify({ username, password }),
+            body: JSON.stringify({ username, password  }),
         });
         
         const data = await response.json();
-        if (response.ok) {
+        if(response.ok) {
             localStorage.setItem("token", data.token);
-            window.location.href = "pages/dashboard.html";
+            // set token cookie so the server can read it on protected routes
+            document.cookie = `token=${data.token}; path=/; max-age=3600; samesite=lax`;
+            window.location.href = "/dashboard";
         }
         else {
             registerError.textContent = data.message || "Registration failed";
