@@ -1,4 +1,3 @@
-
 require("dotenv").config();
 
 const cors = require("cors")
@@ -6,8 +5,6 @@ const express = require("express")
 const jwt = require("jsonwebtoken")
 const path = require("path")
 const AuthRouter = require("./src/routers/AuthRouter.js")
-
-
 
 const app = express()
 app.use(cors())
@@ -52,8 +49,7 @@ function authMiddleware(req, res, next) {
     return next();
   } 
   catch(err) {
-    return res.status(401)
-              .sendFile(path.join(__dirname, 'public', 'pages', 'unauthorized.html'));
+    return res.status(401).sendFile(path.join(__dirname, 'public', 'pages', 'unauthorized.html'));
   }
 }
 
@@ -77,4 +73,3 @@ app.get("/api/conversations/:userID", async (req, res) => {
 app.listen(5050, () => {
   console.log("Server is running: localhost:5050");
 })
-

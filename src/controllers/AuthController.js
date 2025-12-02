@@ -2,11 +2,6 @@ const db = require("../controllers/DatabaseManager")
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 
-module.exports = {
-    register,
-    login
-};
-
 async function register(req, res) {
     const { username, password } = req.body;
     
@@ -57,3 +52,8 @@ async function login(req, res) {
 
     res.status(200).json({ message: "Login successful!", token });
 }
+
+module.exports = {
+    register,
+    login
+};

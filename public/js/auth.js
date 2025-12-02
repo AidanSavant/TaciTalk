@@ -44,7 +44,7 @@ loginFormEl.addEventListener("submit", async (e) => {
         if (response.ok) {
             localStorage.setItem("token", data.token);
             document.cookie = `token=${data.token}; path=/; max-age=3600; samesite=lax`;
-            window.location.href = "/dashboard";
+            window.location.href = "pages/dashboard.html";
         } 
         else {
             loginError.textContent = data.message || "Login failed";
@@ -78,15 +78,14 @@ registerFormEl.addEventListener("submit", async (e) => {
             headers: {
                 "Content-Type": "application/json",
             },
-            body: JSON.stringify({ username, password  }),
+            body: JSON.stringify({ username, password }),
         });
         
         const data = await response.json();
         if(response.ok) {
             localStorage.setItem("token", data.token);
-            // set token cookie so the server can read it on protected routes
             document.cookie = `token=${data.token}; path=/; max-age=3600; samesite=lax`;
-            window.location.href = "/dashboard";
+            window.location.href = "pages/dashboard.html";
         }
         else {
             registerError.textContent = data.message || "Registration failed";
