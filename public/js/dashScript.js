@@ -1,7 +1,7 @@
 const sidebar = document.getElementById("messageholder");
 
 async function populatingMessages() {
-  sidebar.innerhtml = "";
+  sidebar.innerHTML = "";
 
   const response = await fetch("/api/conversations/1");
   const messages = await response.json();
