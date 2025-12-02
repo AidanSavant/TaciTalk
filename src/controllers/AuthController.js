@@ -8,7 +8,6 @@ module.exports = {
 };
 
 async function register(req, res) {
-    console.log(req.body)
     const { username, password } = req.body;
     
     if(!username || !password) {
@@ -22,7 +21,7 @@ async function register(req, res) {
 
     const hashedPassword = await bcrypt.hash(password, 10);
     await db.createUser(username, hashedPassword, "");
-    // fetch the created user to build a token
+
     const created = await db.getUser(username);
     const token = jwt.sign(
         { userId: created.UserID, username: created.Username },

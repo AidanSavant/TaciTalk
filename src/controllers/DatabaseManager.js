@@ -1,6 +1,4 @@
-
-const mysql = require("mysql2/promise");
-
+require("dotenv").config();
 
 const host = process.env.DB_HOST;
 const user = process.env.DB_USER;
@@ -108,6 +106,17 @@ class DatabaseManager {
     const params = [conversationID];
     const results = await this.executeQuery(sql, params);
     return results[0] || null;
+  }
+
+  //Read all Conversations for a User
+  async getUserConversations(userID) {
+    const sql = "SELECT * FROM Conversations WHERE CreatedBy = ?";
+    const params = [userID];
+    const results = await this.executeQuery(sql, params);
+    if (results.length <= 0) {
+      results = [];
+    }
+    return results;
   }
 
   //Update Conversation Title and Last Update Time
@@ -242,4 +251,4 @@ class DatabaseManager {
   }
 }
 
-module.exports = new DatabaseManager();
+module.exports = DatabaseManager;

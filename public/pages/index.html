@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>TaciTalk – Secure Messaging</title>
+  <link rel="stylesheet" href="../styles/style.css"/>
+</head>
+<body>
+  <div class="layout">
+    <div class="auth-card">
+
+      <h1 class="logo">TaciTalk</h1>
+      <p class="tagline">Simple, fast, and secure</p>
+
+      <div id="login-form">
+        <h2 class="title">Sign In</h2>
+
+        <form>
+          <div class="input-group">
+            <label for="login-username">Username</label>
+            <input id="login-username" type="text" autocomplete="username"/>
+          </div>
+
+          <div class="input-group">
+            <label for="login-password">Password</label>
+            <input id="login-password" type="password" autocomplete="current-password"/>
+          </div>
+
+          <button type="submit" id="login-btn" class="btn-primary">Login</button>
+        </form>
+
+        <p class="switch">
+          No account? <span id="show-register">Register</span>
+        </p>
+
+        <div id="login-error" class="error"></div>
+      </div>
+
+      <div id="register-form" class="hidden">
+        <h2 class="title">Create Account</h2>
+
+        <form>
+          <div class="input-group">
+            <label for="register-username">Username</label>
+            <input id="register-username" type="text" autocomplete="username"/>
+          </div>
+
+          <div class="input-group">
+            <label for="register-password">Password</label>
+            <input id="register-password" type="password" autocomplete="new-password"/>
+          </div>
+
+          <div class="input-group">
+            <label for="register-password-confirm">Confirm Password</label>
+            <input id="register-password-confirm" type="password" autocomplete="new-password"/>
+          </div>
+
+          <button type="submit" id="register-btn" class="btn-primary">Register</button>
+        </form>
+
+        <p class="switch">
+          Already have an account? <span id="show-login">Sign In</span>
+        </p>
+
+        <div id="register-error" class="error"></div>
+      </div>
+
+      <script src="src/auth.js"></script>
+
+      <footer class="footer">© 2025 TaciTalk • Penguin Gang</footer>
+    </div>
+  </div>
+</body>
+</html>
