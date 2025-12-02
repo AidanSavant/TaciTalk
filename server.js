@@ -1,3 +1,4 @@
+
 require("dotenv").config();
 
 const cors = require("cors")
@@ -5,6 +6,7 @@ const express = require("express")
 const jwt = require("jsonwebtoken")
 const path = require("path")
 const AuthRouter = require("./src/routers/AuthRouter.js")
+
 
 const app = express();
 app.use(cors())
@@ -59,8 +61,20 @@ app.get('/pages/dashboard.html', authMiddleware, (_, res) => {
   res.sendFile(path.join(__dirname, 'public', 'pages', 'dashboard.html'));
 });
 
-app.use(express.static("public"))
+app.use(express.static("public"));
+
+app.get("/api/conversations/:userID", async (req, res) => {
+  try {
+    const userID = req.params.userID;
+    const conversations = await DatabaseManager.getConversations(userID);
+    res.json(conversations);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
 
 app.listen(5050, () => {
   console.log("Server is running: localhost:5050");
 })
+
