@@ -1,5 +1,6 @@
 require("dotenv").config();
 
+const mysql = require("mysql2/promise");
 const host = process.env.DB_HOST;
 const user = process.env.DB_USER;
 const password = process.env.DB_PASS;
@@ -112,7 +113,7 @@ class DatabaseManager {
   async getUserConversations(userID) {
     const sql = "SELECT * FROM Conversations WHERE CreatedBy = ?";
     const params = [userID];
-    const results = await this.executeQuery(sql, params);
+    let results = await this.executeQuery(sql, params);
     if (results.length <= 0) {
       results = [];
     }
@@ -251,4 +252,4 @@ class DatabaseManager {
   }
 }
 
-module.exports = DatabaseManager;
+module.exports = new DatabaseManager();
