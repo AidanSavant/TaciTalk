@@ -6,7 +6,7 @@ const jwt = require("jsonwebtoken")
 const path = require("path")
 const AuthRouter = require("./src/routers/AuthRouter.js")
 
-const app = express();
+const app = express()
 app.use(cors())
 app.use(express.json())
 app.use("/api", AuthRouter)
@@ -53,7 +53,6 @@ function authMiddleware(req, res, next) {
               .sendFile(path.join(__dirname, 'public', 'pages', 'unauthorized.html'));
   }
 }
-
 
 app.get('/pages/dashboard.html', authMiddleware, (_, res) => {
   res.sendFile(path.join(__dirname, 'public', 'pages', 'dashboard.html'));
