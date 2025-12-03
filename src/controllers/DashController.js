@@ -17,6 +17,17 @@ async function getUserConversations(req, res) {
   }
 }
 
+async function getUsers(req, res) {
+  try {
+    const users = await dataBase.getUsers();
+
+    res.status(200).json(users);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Server Error");
+  }
+}
+
 async function getUserFriends(req, res) { 
   try {
     const id = req.params.id;
@@ -29,4 +40,4 @@ async function getUserFriends(req, res) {
   }
 }
 
-module.exports = { getUserConversations, getUserFriends };
+module.exports = { getUserConversations, getUserFriends, getUsers };

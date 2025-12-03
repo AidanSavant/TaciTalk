@@ -1,6 +1,41 @@
 const sidebar = document.getElementById("messageholder");
 const friendsSidebar = document.getElementById("friends-list");
 const userID = localStorage.getItem("currentUserID");
+const newConversationButton = document.getElementById("newConversation")
+const userListContainer = document.getElementById("userListContainer");
+
+
+
+
+async function renderUsers() { 
+  const response = await fetch(`/api/users`);
+  const rawData = await response.json();
+  const users = Array.isArray(rawData) ? rawData : [rawData];
+  
+  users.forEach((user) => {
+    const userElement = document.createElement("label");
+    userElement.className = "user-item";
+    
+    const checkbox = document.createElement('input')
+    checkbox.type = 'checkbox';
+    checkbox.value = user.userID;
+    checkbox.name = "selectedUsers";
+    userElement.appendChild(checkbox);
+    userElement.append(` ${user.Username}`);
+    if (userListContainer) {
+        userListContainer.appendChild(userElement);
+    }
+    
+    
+  });
+}
+
+renderUsers();
+
+newConversationButton.addEventListener("click", () => {
+  newConversationDialog.showModal();
+})
+
 
 async function populatingMessages() {
   sidebar.innerHTML = "";
