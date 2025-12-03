@@ -5,7 +5,7 @@ const express = require("express");
 const jwt = require("jsonwebtoken");
 const path = require("path");
 const AuthRouter = require("./src/routers/AuthRouter.js");
-const ConvRouter = require("./src/routers/ConvRouter.js");
+const ConvRouter = require("./src/routers/DashRouter.js");
 
 const app = express();
 app.use(cors());

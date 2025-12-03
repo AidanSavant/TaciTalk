@@ -1,9 +1,9 @@
-const dataBase = require("../controllers/DatabaseManager");
+const dataBase = require("./DatabaseManager");
 
 async function getUserConversations(req, res) {
   try {
     const id = req.params.id;
-    console.log(id);
+  
     const conversation = await dataBase.getUserConversations(id);
 
     if (!conversation || conversation.length === 0) {
@@ -17,4 +17,16 @@ async function getUserConversations(req, res) {
   }
 }
 
-module.exports = { getUserConversations };
+async function getUserFriends(req, res) { 
+  try {
+    const id = req.params.id;
+    const friends = await dataBase.getUserFriendships(id);
+
+    res.status(200).json(friends);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Server Error");
+  }
+}
+
+module.exports = { getUserConversations, getUserFriends };

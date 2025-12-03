@@ -45,7 +45,7 @@ async function login(req, res) {
   }
 
   const user = await db.getUser(username);
-  console.log("DATABASE USER OBJECT:", user);
+  
   if (!user) {
     return res.status(401).json({ message: "Invalid username or password!" });
   }
