@@ -1,10 +1,10 @@
 const dataBase = require("../controllers/DatabaseManager");
 
-async function getConversationById(req, res) {
+async function getUserConversations(req, res) {
   try {
     const id = req.params.id;
-
-    const conversation = await dataBase.getConversationById(id);
+    console.log(id);
+    const conversation = await dataBase.getUserConversations(id);
 
     if (!conversation || conversation.length === 0) {
       return res.status(404).json({ error: "Conversation not found" });
@@ -17,4 +17,4 @@ async function getConversationById(req, res) {
   }
 }
 
-module.exports = { getConversationById };
+module.exports = { getUserConversations };

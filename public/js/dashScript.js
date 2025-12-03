@@ -3,19 +3,24 @@ const sidebar = document.getElementById("messageholder");
 async function populatingMessages() {
   sidebar.innerHTML = "";
 
-  const response = await fetch("/api/conversations/1");
-  const messages = await response.json();
+  const userID = localStorage.getItem("currentUserID");
+  console.log(userID);
 
-  if (messages.length === 0 || messages === null) {
-    sidebar.innerHTML = "<p>No messages</p>";
-  } else {
-    messages.forEach((message) => {
-      const messageElement = document.createElement("div");
-      messageElement.classList.add("message");
-      messageElement.textContent = message;
-      sidebar.appendChild(messageElement);
-    });
+  if (!userID) {
+    console.warn("No User ID found. Redirecting to login...");
+    return;
   }
+
+  const response = await fetch(`/api/conversations/${userID}`);
+  const rawData = await response.json();
+  const message = Array.isArray(rawData) ? rawData : [rawData];
+
+  message.forEach((message) => {
+    const convoTitleElement = document.createElement("div");
+    convoTitleElement.classList.add("message-title");
+    convoTitleElement.textContent = message.ConvoTitle;
+    sidebar.appendChild(convoTitleElement);
+  });
 }
 
 populatingMessages();
