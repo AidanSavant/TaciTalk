@@ -108,6 +108,17 @@ class DatabaseManager {
     return results[0] || null;
   }
 
+  //Read all Conversations for a User
+  async getUserConversations(userID) {
+    const sql = "SELECT * FROM Conversations WHERE CreatedBy = ?";
+    const params = [userID];
+    const results = await this.executeQuery(sql, params);
+    if (results.length <= 0) {
+      results = [];
+    }
+    return results;
+  }
+
   //Update Conversation Title and Last Update Time
   async updateConversation(
     conversationID,
@@ -240,4 +251,4 @@ class DatabaseManager {
   }
 }
 
-module.exports = new DatabaseManager();
+module.exports = DatabaseManager;
