@@ -71,6 +71,12 @@ class DatabaseManager {
     const results = await this.executeQuery(sql, params);
     return results[0] || null; // Return the user object or null if not found
   }
+  
+  async getUsers() {
+    const sql = "SELECT UserID, Username, Bio FROM Users";
+    const results = await this.executeQuery(sql);
+    return results;
+  }
 
   //Update User Bio
   async updateUserBio(userID, newBio) {
