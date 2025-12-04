@@ -58,7 +58,7 @@ createNewConvoBtn.addEventListener("click", async  (e) => {
     alert("You can only select ONE friend for a Single conversation.");
     return;
   }
-
+  
   await createNewConversation(titleValue, typeValue, selectedUserIds,userID);
 
   document.getElementById("newConversationDialog").close();
