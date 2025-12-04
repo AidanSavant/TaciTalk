@@ -8,25 +8,48 @@
     </head>
 
     <body>
+        <dialog id="newConversationDialog">
+            <h3>Start a Conversation</h3>
+            <div>
+                <label><input type="radio" name="convoType" value="GROUP" checked> Group</label>
+                <label><input type="radio" name="convoType" value="SINGLE"> Single</label>
+              </div>
+            
+              <form method="dialog">
+                <div id="groupFields">
+                  <label>Group Name:</label>
+                  <input type="text" id="groupName" placeholder="My Group">
+                </div>
+            
+                <div id="friendSelector">
+                  <p>Select friends to add:</p>
+                  
+                  <div id="userListContainer" class="scroll-menu">
+                    </div>
+                </div>
+            
+                <br>
+                <button id="createBtn" value="default">Create</button>
+                <button type="button" id="closeBtn">Cancel</button>
+              </form>
+        </dialog>
+
         <!-- TOP BAR -->
         <div class="top-bar">
             <div class="search-box">
                 <input type="text" placeholder="Search..." />
             </div>
 
-            <div class="friends-list">
-                <div class="friend">Friend 1</div>
-                <div class="friend">Friend 2</div>
-                <div class="friend">Friend 3</div>
-                <div class="friend">Friend 4</div>
-            </div>
+            <div id="friends-list" class="friends-list"></div>
         </div>
 
         <!-- MAIN BODY -->
         <div class="main-grid">
             <!-- LEFT SIDEBAR -->
             <div id="sidebar" class="sidebar">
-                <button id="newConversation" class="newConversation">New Conversation</button>
+                <button id="newConversation" class="newConversation">
+                    New Conversation
+                </button>
                 <div id="messageholder" class="messageholder"></div>
 
                 <div class="bottom-buttons">
@@ -40,7 +63,13 @@
                 <div class="msg">Here are some words...</div>
                 <div class="msg right">Some more words on the right...</div>
                 <div class="msg">And another message.</div>
+                <div class="bottom-chat-area">
+                    <input type="text" id="messageInput" class="messageInput" placeholder="Type your message..." />
+                    <button type="button" id="sendMessageBtn" class="sendMessageBtn">Send</button>
+                </div>
             </div>
+            
+            
         </div>
 
         <script src="../js/dashScript.js"></script>

@@ -1,10 +1,45 @@
 const sidebar = document.getElementById("messageholder");
+const friendsSidebar = document.getElementById("friends-list");
+const userID = localStorage.getItem("currentUserID");
+const newConversationButton = document.getElementById("newConversation")
+const userListContainer = document.getElementById("userListContainer");
+
+
+
+
+async function renderUsers() { 
+  const response = await fetch(`/api/users`);
+  const rawData = await response.json();
+  const users = Array.isArray(rawData) ? rawData : [rawData];
+  
+  users.forEach((user) => {
+    const userElement = document.createElement("label");
+    userElement.className = "user-item";
+    
+    const checkbox = document.createElement('input')
+    checkbox.type = 'checkbox';
+    checkbox.value = user.userID;
+    checkbox.name = "selectedUsers";
+    userElement.appendChild(checkbox);
+    userElement.append(` ${user.Username}`);
+    if (userListContainer) {
+        userListContainer.appendChild(userElement);
+    }
+    
+    
+  });
+}
+
+renderUsers();
+
+newConversationButton.addEventListener("click", () => {
+  newConversationDialog.showModal();
+})
+
 
 async function populatingMessages() {
   sidebar.innerHTML = "";
-
-  const userID = localStorage.getItem("currentUserID");
-  console.log(userID);
+  
 
   if (!userID) {
     console.warn("No User ID found. Redirecting to login...");
@@ -14,6 +49,11 @@ async function populatingMessages() {
   const response = await fetch(`/api/conversations/${userID}`);
   const rawData = await response.json();
   const message = Array.isArray(rawData) ? rawData : [rawData];
+  
+  if (message.length === 0) { 
+    sidebar.innerHTML = "<p>No messages found</p>";
+    return;
+  }
 
   message.forEach((message) => {
     const convoTitleElement = document.createElement("div");
@@ -22,5 +62,39 @@ async function populatingMessages() {
     sidebar.appendChild(convoTitleElement);
   });
 }
+
+
+async function populateFriends() {
+  friendsSidebar.innerHTML = "";
+
+  const userID = localStorage.getItem("currentUserID");
+
+  if (!userID) {
+    console.warn("No User ID found. Redirecting to login...");
+    return;
+  }
+
+  const response = await fetch(`/api/friends/${userID}`);
+  const rawData = await response.json();
+  
+  const friends = Array.isArray(rawData) ? rawData : [rawData];
+  
+  if(friends.length === 0) {
+    const noFriendsElement = document.createElement("div");
+    noFriendsElement.classList.add("no-friends");
+    noFriendsElement.textContent = "No friends found";
+    friendsSidebar.appendChild(noFriendsElement);
+    return;
+  }
+
+  friends.forEach((friend) => {
+    const friendElement = document.createElement("div");
+    friendElement.classList.add("friend");
+    friendElement.textContent = friend.username;
+    sidebar.appendChild(friendElement);
+  });
+}
+
+populateFriends();
 
 populatingMessages();

@@ -1,4 +1,4 @@
-require("dotenv").config();
+const mysql = require("mysql2/promise");
 
 const mysql = require("mysql2/promise");
 const host = process.env.DB_HOST;
@@ -71,6 +71,12 @@ class DatabaseManager {
     const results = await this.executeQuery(sql, params);
     return results[0] || null; // Return the user object or null if not found
   }
+  
+  async getUsers() {
+    const sql = "SELECT UserID, Username, Bio FROM Users";
+    const results = await this.executeQuery(sql);
+    return results;
+  }
 
   //Update User Bio
   async updateUserBio(userID, newBio) {
@@ -92,10 +98,7 @@ class DatabaseManager {
 
   //Create a new Conversation
   async createConversation(title, type, createdBy) {
-    const now = new Date();
-    // Use NOW() in SQL for server-side time
-    const sql =
-      "INSERT INTO Conversations (ConvoTitle, ConvoType, LastMessage, CreatedBy, LastUpdatedAt) VALUES (?, ?, NOW(), ?, NOW())";
+    const sql = "INSERT INTO Conversations (ConvoTitle, ConvoType, LastMessage, CreatedBy, LastUpdatedAt) VALUES (?, ?, NOW(), ?, NOW())";
     const params = [title, type, createdBy];
     const results = await this.executeQuery(sql, params);
     return results.insertId;

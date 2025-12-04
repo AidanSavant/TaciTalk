@@ -2,11 +2,6 @@ const db = require("../controllers/DatabaseManager.js");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 
-module.exports = {
-  register,
-  login,
-};
-
 async function register(req, res) {
   const { username, password } = req.body;
 
@@ -45,7 +40,7 @@ async function login(req, res) {
   }
 
   const user = await db.getUser(username);
-  console.log("DATABASE USER OBJECT:", user);
+  
   if (!user) {
     return res.status(401).json({ message: "Invalid username or password!" });
   }
@@ -63,3 +58,8 @@ async function login(req, res) {
 
   res.status(200).json({ message: "Login successful!", token, userId: user.UserID });
 }
+
+module.exports = {
+    register,
+    login
+};
