@@ -8,8 +8,6 @@ ConversationID
 UserID
 */
 
-import e from "cors";
-
 const crypto = require("crypto");
 
 class MessageController {
@@ -30,7 +28,7 @@ class MessageController {
             return socket.emit("error", { message: "Invalid message payload!" });
         }
 
-        const messageId = `msg_${crypto.randomBytes(16).toString("hex")}`;
+        const messageId = `${crypto.randomBytes(16).toString("hex")}`;
         const timestamp = Date.now();
         const expiresAt = timestamp + 24 * 3600; // 24 hours from now
     
