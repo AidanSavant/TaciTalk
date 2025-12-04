@@ -29,7 +29,7 @@ class MessageController {
         }
 
         const messageId = `${crypto.randomBytes(16).toString("hex")}`;
-        const timestamp = Date.now();
+        const timestamp = new Date().toISOString().slice(0,19).replace('T', ' ');;
         const expiresAt = timestamp + 24 * 3600; // 24 hours from now
     
         const message = {
