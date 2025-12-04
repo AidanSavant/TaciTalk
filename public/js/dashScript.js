@@ -3,6 +3,7 @@ const friendsSidebar = document.getElementById("friends-list");
 const userID = localStorage.getItem("currentUserID");
 const newConversationButton = document.getElementById("newConversation")
 const userListContainer = document.getElementById("userListContainer");
+const createNewConvoBtn = document.getElementById("createBtn");
 
 
 
@@ -36,6 +37,57 @@ newConversationButton.addEventListener("click", () => {
   newConversationDialog.showModal();
 })
 
+createNewConvoBtn.addEventListener("click", async  (e) => { 
+  e.preventDefault(); 
+
+  const titleInput = document.getElementById("groupName");
+  const titleValue = titleInput.value.trim() || "New Chat"; 
+
+  const typeRadio = document.querySelector('input[name="convoType"]:checked');
+  const typeValue = typeRadio ? typeRadio.value : "GROUP";
+
+  const checkedBoxes = document.querySelectorAll('#userListContainer input[type="checkbox"]:checked');
+  const selectedUserIds = Array.from(checkedBoxes).map(checkbox => checkbox.value);
+
+  if (selectedUserIds.length === 0) {
+    alert("Please select at least one friend.");
+    return;
+  }
+
+  if (typeValue === "SINGLE" && selectedUserIds.length > 1) {
+    alert("You can only select ONE friend for a Single conversation.");
+    return;
+  }
+
+  await createNewConversation(titleValue, typeValue, selectedUserIds,userID);
+
+  document.getElementById("newConversationDialog").close();
+  titleInput.value = ""; 
+  checkedBoxes.forEach(box => box.checked = false);
+})
+
+
+
+async function createNewConversation(conversationTitle, conversationType, userList, currentUserID) { 
+  
+  const payload = {
+    title: conversationTitle, 
+    type: conversationType, 
+    userIds: userList,  
+    createdBy: currentUserID   
+  };
+  
+  console.log(JSON.stringify(payload));
+  
+  const response = await fetch(`/api/newConversation`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  });
+
+  const rawData = await response.json();
+  console.log("Server response:", rawData);
+}
 
 async function populatingMessages() {
   sidebar.innerHTML = "";

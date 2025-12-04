@@ -225,6 +225,7 @@ body {
 }
 
 .messageInput{
+    flex-grow: 1;
     padding: 10px;
     background: #1f1f1f;
     border-radius: 10px;
