@@ -13,6 +13,8 @@ async function renderUsers() {
   const rawData = await response.json();
   const users = Array.isArray(rawData) ? rawData : [rawData];
   
+  console.log(users);
+  
   users.forEach((user) => {
     const userElement = document.createElement("label");
     userElement.className = "user-item";
