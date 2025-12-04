@@ -1,56 +1,79 @@
 // Redis Connection
+const { createClient } = require("redis");
 
-import { createClient } from "redis";
-
-//const redisClient = createClint({
-//  url: 'redis://USERNAME:PASSWORD:127.0.0.1:6379'
-//})
-const redisClient = createClient({});
-const mT = Object.freeze({ // is this even going to be used?
+let redisClient;
+const mT = Object.freeze({
   TEXT: "text",
   GIF: "gif",
   PNG: "png"
-  //etc etc
-})
+});
 
-redisClient.on("error", (err) => console.log("REDIS Failed ", err));
+// Initialize Redis client asynchronously
+/*
+(async () => {
+  try {
+    redisClient = createClient({});
 
-await redisClient.connect();
+    redisClient.on("error", (err) => console.log("REDIS Failed ", err));
 
-console.log("Connected to redis");
+    await redisClient.connect();
+    console.log("Connected to redis");
+  } catch (error) {
+    console.error("Failed to initialize Redis:", error);
+  }
+})();
+*/
 
-function getMsgID(userID,conversationID){
+function getMsgID(userID, conversationID) {
   return conversationID.toString() + "-" + userID.toString();
 }
 
-async function createMessage(userID, conversationID, messageContent){
-  let msgID = getMsgID(userID,conversationID);
+async function createMessage(userID, conversationID, messageContent) {
+  if (!redisClient) throw new Error("Redis client not initialized");
+  let msgID = getMsgID(userID, conversationID);
   let newmsg = await redisClient.rPush(msgID, messageContent);
+  return newmsg;
 }
 
-async function deleteMessage(userID,conversationID){
-  let msgID = getMsgID(userID,conversationID);
-  redisClient.del(msgID);
+async function deleteMessage(userID, conversationID) {
+  if (!redisClient) throw new Error("Redis client not initialized");
+  let msgID = getMsgID(userID, conversationID);
+  await redisClient.del(msgID);
 }
 
-async function getUserLogs(userID,conversationID){
-  let msgID = getMsgID(userID,conversationID);
+async function getUserLogs(userID, conversationID) {
+  if (!redisClient) throw new Error("Redis client not initialized");
+  let msgID = getMsgID(userID, conversationID);
   return await redisClient.lRange(msgID, 0, -1);
 }
 
-async function getMessageFromIndex(userID,conversationID,index){
-  let msgID = getMsgID(userID,conversationID);
+async function getMessageFromIndex(userID, conversationID, index) {
+  if (!redisClient) throw new Error("Redis client not initialized");
+  let msgID = getMsgID(userID, conversationID);
   let message = await redisClient.lIndex(msgID, index);
   return message;
 }
 
-async function getUserMessageCount(userID,conversationID){
-  let msgID = getMsgID(userID,conversationID);
+async function getUserMessageCount(userID, conversationID) {
+  if (!redisClient) throw new Error("Redis client not initialized");
+  let msgID = getMsgID(userID, conversationID);
   let messages = await redisClient.lLen(msgID);
   return messages;
 }
 
-async function editMessage(userID,conversationID,index,messageContent){
-  let msgID = getMsgID(userID,conversationID);
-  await redisClient.lSet(msgID,index,messageContent)
+async function editMessage(userID, conversationID, index, messageContent) {
+  if (!redisClient) throw new Error("Redis client not initialized");
+  let msgID = getMsgID(userID, conversationID);
+  await redisClient.lSet(msgID, index, messageContent);
 }
+
+module.exports = {
+  createMessage,
+  deleteMessage,
+  getUserLogs,
+  getMessageFromIndex,
+  getUserMessageCount,
+  editMessage,
+  getMsgID,
+  mT
+};

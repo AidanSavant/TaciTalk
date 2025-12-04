@@ -106,6 +106,6 @@ io.on("connection", (socket) => {
   });
 })
 
-app.listen(5050, () => {
+httpServer.listen(5050, () => {
   console.log("Server is running: localhost:5050");
 })

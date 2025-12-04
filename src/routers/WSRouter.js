@@ -1,4 +1,4 @@
-const MessageController = require("../controllers/MessageController").default;
+const MessageController = require("../controllers/MessageController");
 
 class WSRouter {
     constructor(io, db, redis) {
