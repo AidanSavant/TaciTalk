@@ -98,7 +98,11 @@ class DatabaseManager {
 
   //Create a new Conversation
   async createConversation(title, type, createdBy) {
-    const sql = "INSERT INTO Conversations (ConvoTitle, ConvoType, LastMessage, CreatedBy, LastUpdatedAt) VALUES (?, ?, NOW(), ?, NOW())";
+
+
+    const now = new Date();
+    const sql =
+      "INSERT INTO Conversations (ConvoTitle, ConvoType, CreatedBy, LastUpdatedAt) VALUES (?, ?, ?, NOW())";
     const params = [title, type, createdBy];
     const results = await this.executeQuery(sql, params);
     return results.insertId;

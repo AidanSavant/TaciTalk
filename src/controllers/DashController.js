@@ -40,4 +40,17 @@ async function getUserFriends(req, res) {
   }
 }
 
-module.exports = { getUserConversations, getUserFriends, getUsers };
+async function createConversation(req, res) {
+  try {
+    console.log("Incoming Body:", req.body);
+    const { title, type, createdBy } = req.body;
+    const conversation = await dataBase.createConversation(title, type, createdBy);
+    
+    res.status(201).json(conversation);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Server Error");
+  }
+}
+
+module.exports = { getUserConversations, getUserFriends, getUsers, createConversation };
