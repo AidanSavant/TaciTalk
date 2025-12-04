@@ -29,18 +29,18 @@ console.log("TEST PRINT ALL "+await redisClient.keys('*'))
 console.log("total keys: " + (await getUserMessageCount(3, 15)));
 await redisClient.FLUSHALL()
 
+//OUTDATED MSGID
 function getMsgID(userID,conversationID){
   return userID.toString() + "-" + conversationID.toString();
 }
 
-async function createMessage(userID, conversationID, messageContent){
+async function createMessage(msgJSON){
   let msgID = getMsgID(userID,conversationID);
   let newmsg = await redisClient.rPush(msgID, messageContent);
 }
 
-async function deleteMessage(userID,conversationID){
-  let msgID = getMsgID(userID,conversationID);
-  redisClient.del(msgID);
+async function deleteMessage(msgID){
+
 }
 
 async function getUserLogs(userID,conversationID){
@@ -54,6 +54,7 @@ async function getMessageFromIndex(userID,conversationID,index){
   return message;
 }
 
+//Outdated message ID, new message id uses random string
 async function getUserMessageCount(userID,conversationID){
   let msgID = getMsgID(userID,conversationID);
   //let messages = await redisClient.lLen(msgID);
