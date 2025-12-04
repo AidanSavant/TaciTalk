@@ -6,5 +6,4 @@ router.get("/friends/:id", DashController.getUserFriends);
 router.get("/users", DashController.getUsers);
 router.post("/newConversation", DashController.createConversation);
 
-
 module.exports = router;
