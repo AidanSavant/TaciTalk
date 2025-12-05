@@ -51,30 +51,7 @@ class MessageController {
         */
 
         this.io.to(`conversation_${conversationID}`).emit("new_message", message);
-    
         return socket.emit("message_sent", { messageID: messageId });
-    }
-
-    async readmessage(socket, payload) {
-        if(!socket.userId) {
-            return socket.emit("error", { message: "Unauthorized User!" });   
-        }
-
-        const { conversationID } = payload;
-
-        if(!messageID) {
-            return socket.emit("error", { message: "Invalid message ID!" });
-        }
-
-        /*
-        const unsavedMessages = await this.redis.getMessages(conversationID);
-        const savedMessages = await this.db.getMessages(conversationID);
-        
-        const allMessages = [...unsavedMessages, ...savedMessages];
-        allMessages.sort((a, b) => a.timestamp - b.timestamp);
-
-        return socket.emit("message_history", { messages: allMessages });
-        */
     }
 
     async joinConversation(socket, payload) {

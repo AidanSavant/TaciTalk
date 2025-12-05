@@ -15,15 +15,15 @@ class WSRouter {
         });
 
         /*
-        This would be if the user wanted to leave, this would remove their socketId from the conversation room
+        // This would be if the user wanted to leave, this would remove their socketId from the conversation room
         socket.on("leave_conversation", (payload) => {
             this.messageController.leaveConversation(socket, payload);
         });
-
-        socket.on("read_message", (payload) => {
-            this.messageController.readMessage(socket, payload);
-        });
         */
+
+        socket.on("read_messages", (payload) => {
+            this.messageController.readMessages(socket, payload);
+        });
     }
 }
 

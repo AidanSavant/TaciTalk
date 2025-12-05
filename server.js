@@ -77,6 +77,7 @@ app.get("/pages/dashboard.html", authMiddleware, (_, res) => {
 });
 
 app.use(express.static("public"));
+app.set("io", io)
 
 const wsRouter = new WSRouter(io, db, redis);
 
