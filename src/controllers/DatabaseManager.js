@@ -77,6 +77,22 @@ class DatabaseManager {
     const results = await this.executeQuery(sql);
     return results;
   }
+  
+  async getUsername(userID) {
+    const sql = "SELECT Username FROM Users WHERE UserID = ?";
+    const params = [userID];
+    const results = await this.executeQuery(sql, params);
+    return results[0]?.Username || null;
+  }
+  
+  async getUsernames(userIdList) {
+    userIdList = userIdList.map(id => Number(id));
+    if (!userIdList || userIdList.length === 0) return [];
+    const sql = "SELECT Username FROM Users WHERE UserID IN (?)";
+    const [results] = await this.pool.query(sql, [userIdList]);
+    console.log(results)
+    return results.map(row => row.Username);
+  }
 
   //Update User Bio
   async updateUserBio(userID, newBio) {
@@ -246,6 +262,17 @@ class DatabaseManager {
     const params = [conversationID];
     return await this.executeQuery(sql, params);
   }
+  
+  async addConversationMembers(conversationId, userIdList) {
+      if (!userIdList || userIdList.length === 0) return;
+      
+      const sql = "INSERT INTO ConversationMembers (ConversationID, UserID) VALUES ?";
+
+      const values = userIdList.map((userId) => [conversationId, parseInt(userId)]);
+  
+      const [results] = await this.pool.query(sql, [values]);
+      return results;
+    }
 
   // Remove a User from a Conversation
   async removeConversationMember(conversationID, userID) {

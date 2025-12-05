@@ -28,6 +28,7 @@ async function getUsers(req, res) {
   }
 }
 
+
 async function getUserFriends(req, res) { 
   try {
     const id = req.params.id;
@@ -42,14 +43,35 @@ async function getUserFriends(req, res) {
 
 async function createConversation(req, res) {
   try {
-    console.log("Incoming Body:", req.body);
-    const { title, type, createdBy } = req.body;
-    const conversation = await dataBase.createConversation(title, type, createdBy);
+    let { title, type, userIds, createdBy } = req.body;
     
-    res.status(201).json(conversation);
+    if (!Array.isArray(userIds)) userIds = [];
+    console.log(userIds)
+
+    if (type === "SINGLE" || (type === "GROUP" && !title)) {
+      const names = await dataBase.getUsernames(userIds);
+      if (names.length > 0) {
+        title = names.join(", ");
+      }
+    }
+
+    if (!title) title = "New Conversation";
+
+    const conversationId = await dataBase.createConversation(title, type, createdBy);
+
+    const allMembers = [...userIds, createdBy]; 
+    await dataBase.addConversationMembers(conversationId, allMembers);
+
+    res.status(201).json({ 
+      message: "Success", 
+      conversationId, 
+      title,
+      membersAdded: allMembers.length 
+    });
+
   } catch (error) {
-    console.error(error);
-    res.status(500).send("Server Error");
+    console.error("Create Chat Error:", error);
+    res.status(500).json({ message: "Server Error", error: error.toString() });
   }
 }
 

@@ -19,7 +19,7 @@ async function renderUsers() {
     
     const checkbox = document.createElement('input')
     checkbox.type = 'checkbox';
-    checkbox.value = user.userID;
+    checkbox.value = user.UserID;
     checkbox.name = "selectedUsers";
     userElement.appendChild(checkbox);
     userElement.append(` ${user.Username}`);
@@ -42,9 +42,7 @@ createNewConvoBtn.addEventListener("click", async  (e) => {
 
   const titleInput = document.getElementById("groupName");
   const titleValue = titleInput.value.trim() || "New Chat"; 
-
-  const typeRadio = document.querySelector('input[name="convoType"]:checked');
-  const typeValue = typeRadio ? typeRadio.value : "GROUP";
+  let typeValue = "SINGLE";
 
   const checkedBoxes = document.querySelectorAll('#userListContainer input[type="checkbox"]:checked');
   const selectedUserIds = Array.from(checkedBoxes).map(checkbox => checkbox.value);
@@ -54,16 +52,21 @@ createNewConvoBtn.addEventListener("click", async  (e) => {
     return;
   }
 
-  if (typeValue === "SINGLE" && selectedUserIds.length > 1) {
+  if (selectedUserIds.length > 1) {
     alert("You can only select ONE friend for a Single conversation.");
     return;
   }
+  if (selectedUserIds.length > 1) {
+    typeValue = "GROUP";
+  }
   
   await createNewConversation(titleValue, typeValue, selectedUserIds,userID);
-
+  
+  await loadConversationList();
   document.getElementById("newConversationDialog").close();
   titleInput.value = ""; 
   checkedBoxes.forEach(box => box.checked = false);
+  
 })
 
 
@@ -87,6 +90,7 @@ async function createNewConversation(conversationTitle, conversationType, userLi
 
   const rawData = await response.json();
   console.log("Server response:", rawData);
+  
 }
 
 async function populatingMessages() {
@@ -113,6 +117,40 @@ async function populatingMessages() {
     convoTitleElement.textContent = message.ConvoTitle;
     sidebar.appendChild(convoTitleElement);
   });
+}
+
+async function loadConversationList() {
+  const response = await fetch(`/api/conversations/${userID}`, {
+    method: "GET",
+    headers: { "Content-Type": "application/json" }
+  });
+  
+  const data = await response.json();
+  console.log("Conversation list:", data);
+
+  const holder = document.getElementById("messageholder");
+  holder.innerHTML = "";
+
+  data.forEach(convo => {
+    holder.appendChild(renderConversationItem(convo));
+  });
+}
+
+
+function renderConversationItem(convo) {
+  const div = document.createElement("div");
+  div.classList.add("conversation-item");
+  div.dataset.convoId = convo.ConversationID;
+
+  div.innerHTML = `
+    <div class="conversation-title">${convo.ConvoTitle}</div>>
+  `;
+
+  div.addEventListener("click", () => {
+    loadMessagesForConversation(convo.ConversationID);
+  });
+
+  return div;
 }
 
 
