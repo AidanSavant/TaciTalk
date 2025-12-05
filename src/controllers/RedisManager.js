@@ -20,7 +20,6 @@ redisClient.on("error", (err) => console.log("REDIS Failed ", err));
 await redisClient.connect();
 
 console.log("Connected to redis");
-await redisClient.FLUSHALL()
 
 async function createMessage(msgJSON){
   let msgID = msgJSON.messageID
