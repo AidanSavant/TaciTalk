@@ -9,20 +9,24 @@ const createNewConvoBtn = document.getElementById("createBtn");
 
 
 async function renderUsers() { 
-  const response = await fetch(`/api/users`);
+  const response = await fetch("/api/users");
   const rawData = await response.json();
   const users = Array.isArray(rawData) ? rawData : [rawData];
+  
+  console.log(users);
   
   users.forEach((user) => {
     const userElement = document.createElement("label");
     userElement.className = "user-item";
     
+
     const checkbox = document.createElement('input')
     checkbox.type = 'checkbox';
     checkbox.value = user.UserID;
+
     checkbox.name = "selectedUsers";
     userElement.appendChild(checkbox);
-    userElement.append(` ${user.Username}`);
+    userElement.append(`${user.Username}`);
     if (userListContainer) {
         userListContainer.appendChild(userElement);
     }
@@ -42,9 +46,11 @@ createNewConvoBtn.addEventListener("click", async  (e) => {
 
   const titleInput = document.getElementById("groupName");
   const titleValue = titleInput.value.trim() || "New Chat"; 
-  let typeValue = "SINGLE";
 
-  const checkedBoxes = document.querySelectorAll('#userListContainer input[type="checkbox"]:checked');
+  let typeValue = "SINGLE";
+>>>>>>> FranciscoBranch
+
+  const checkedBoxes = document.querySelectorAll("#userListContainer input[type='checkbox']:checked");
   const selectedUserIds = Array.from(checkedBoxes).map(checkbox => checkbox.value);
 
   if (selectedUserIds.length === 0) {
@@ -52,6 +58,9 @@ createNewConvoBtn.addEventListener("click", async  (e) => {
     return;
   }
 
+<<<<<<< HEAD
+
+=======
   if (selectedUserIds.length > 1) {
     alert("You can only select ONE friend for a Single conversation.");
     return;
@@ -69,8 +78,6 @@ createNewConvoBtn.addEventListener("click", async  (e) => {
   
 })
 
-
-
 async function createNewConversation(conversationTitle, conversationType, userList, currentUserID) { 
   
   const payload = {
@@ -83,8 +90,8 @@ async function createNewConversation(conversationTitle, conversationType, userLi
   console.log(JSON.stringify(payload));
   
   const response = await fetch(`/api/newConversation`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload)
   });
 
@@ -188,3 +195,23 @@ async function populateFriends() {
 populateFriends();
 
 populatingMessages();
+
+const logoutBtn = document.getElementById(".settings-btn");
+logoutBtn.addEventListener("click", (e) => {
+  e.preventDefault();
+
+  localStorage.removeItem("token");
+  localStorage.removeItem("currentUserID");
+  document.cookie = "token=; path=/; max-age=0";
+
+  try {
+    if(window.socket && typeof window.socket.disconnect === "function") {
+      window.socket.disconnect();
+    }
+  }
+
+  catch(err) {
+    console.warn("Error disconnecting socket during logout", err);
+  }
+  window.location.href = "/";
+});

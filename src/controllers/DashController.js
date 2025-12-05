@@ -44,29 +44,46 @@ async function getUserFriends(req, res) {
 async function createConversation(req, res) {
   try {
     let { title, type, userIds, createdBy } = req.body;
-    
-    if (!Array.isArray(userIds)) userIds = [];
-    console.log(userIds)
 
-    if (type === "SINGLE" || (type === "GROUP" && !title)) {
+    if (!Array.isArray(userIds)) userIds = [];
+    
+    const DEFAULT_TITLE = "New Chat";  
+
+    // Always recalc title for SINGLE
+    if (type === "SINGLE") {
       const names = await dataBase.getUsernames(userIds);
       if (names.length > 0) {
-        title = names.join(", ");
+        title = names[0]; // SINGLE = exactly one name
       }
     }
 
-    if (!title) title = "New Conversation";
+  
+    if (type === "GROUP") {
+      const userProvidedCustomTitle = title && title !== DEFAULT_TITLE;
+
+      if (!userProvidedCustomTitle) {
+        const names = await dataBase.getUsernames(userIds);
+        if (names.length > 0) {
+          title = names.join(", ");  // Group = join names
+        } else {
+          title = DEFAULT_TITLE;
+        }
+      }
+    }
+
+  
+    if (!title) title = DEFAULT_TITLE;
 
     const conversationId = await dataBase.createConversation(title, type, createdBy);
 
-    const allMembers = [...userIds, createdBy]; 
+    const allMembers = [...userIds, createdBy];
     await dataBase.addConversationMembers(conversationId, allMembers);
 
-    res.status(201).json({ 
-      message: "Success", 
-      conversationId, 
+    res.status(201).json({
+      message: "Success",
+      conversationId,
       title,
-      membersAdded: allMembers.length 
+      membersAdded: allMembers.length
     });
 
   } catch (error) {
