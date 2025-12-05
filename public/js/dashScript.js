@@ -193,7 +193,7 @@ populateFriends();
 
 populatingMessages();
 
-const logoutBtn = document.querySelector(".settings-btn");
+const logoutBtn = document.getElementById("logout-btn");
 logoutBtn.addEventListener("click", (e) => {
   e.preventDefault();
 

@@ -20,10 +20,6 @@ class WSRouter {
             this.messageController.leaveConversation(socket, payload);
         });
         */
-
-        socket.on("read_messages", (payload) => {
-            this.messageController.readMessages(socket, payload);
-        });
     }
 }
 

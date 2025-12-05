@@ -1,6 +1,5 @@
+/*
 // Redis Connection
-
-import { createClient } from "redis";
 
 //const redisClient = createClint({
 //  url: 'redis://USERNAME:PASSWORD:127.0.0.1:6379'
@@ -40,3 +39,4 @@ module.exports = {
   getMessage,
   editMessage
 };
+*/

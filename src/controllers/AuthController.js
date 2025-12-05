@@ -5,14 +5,14 @@ const bcrypt = require("bcrypt");
 async function register(req, res) {
   const { username, password } = req.body;
 
-  if (!username || !password) {
+  if(!username || !password) {
     return res
       .status(400)
       .json({ message: "Username and password are required!" });
   }
 
   const user = await db.getUser(username);
-  if (user !== null) {
+  if(user !== null) {
     return res.status(409).json({ message: "Username already exists!" });
   }
 
@@ -21,7 +21,7 @@ async function register(req, res) {
 
   const created = await db.getUser(username);
   const token = jwt.sign(
-    { userId: created.UserID, username: created.Username },
+  { userId: created.UserID, username: created.Username },
     process.env.JWT_SECRET,
     { expiresIn: "1h" },
   );
