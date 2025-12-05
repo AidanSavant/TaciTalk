@@ -59,14 +59,6 @@ function authMiddleware(req, res, next) {
 }
 
 const app = express();
-const httpServer = createServer(app);
-const io = new Server(httpServer, {
-  cors: {
-    origin: "*",
-    methods: ["GET", "POST"],
-  },
-});
-
 app.use(cors());
 app.use(express.json());
 app.use("/api", AuthRouter);
@@ -77,7 +69,14 @@ app.get("/pages/dashboard.html", authMiddleware, (_, res) => {
 });
 
 app.use(express.static("public"));
-app.set("io", io)
+
+const httpServer = createServer(app);
+const io = new Server(httpServer, {
+  cors: {
+    origin: "*",
+    methods: ["GET", "POST"],
+  },
+});
 
 const wsRouter = new WSRouter(io, db, redis);
 
@@ -96,6 +95,8 @@ io.on("connection", (socket) => {
     const payload = jwt.verify(token, process.env.JWT_SECRET);
     socket.userId = payload.userId;
     wsRouter.initRoutes(socket);
+
+    app.set("io", io)
   }
   catch(err) {
     console.log("Unauthorized socket connection attempt: ", socket.id);
