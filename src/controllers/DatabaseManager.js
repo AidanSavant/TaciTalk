@@ -1,6 +1,5 @@
-require("dotenv").config();
-
 const mysql = require("mysql2/promise");
+
 const host = process.env.DB_HOST;
 const user = process.env.DB_USER;
 const password = process.env.DB_PASS;
@@ -114,6 +113,7 @@ class DatabaseManager {
 
   //Create a new Conversation
   async createConversation(title, type, createdBy) {
+    
     const now = new Date();
     const sql =
       "INSERT INTO Conversations (ConvoTitle, ConvoType, CreatedBy, LastUpdatedAt) VALUES (?, ?, ?, NOW())";

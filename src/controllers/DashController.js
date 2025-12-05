@@ -1,10 +1,11 @@
-const dataBase = require("./DatabaseManager");
+const db = require("./DatabaseManager");
+const redis = require("./RedisManager");
 
 async function getUserConversations(req, res) {
   try {
     const id = req.params.id;
   
-    const conversation = await dataBase.getUserConversations(id);
+    const conversation = await db.getUserConversations(id);
 
     if (!conversation || conversation.length === 0) {
       return res.status(404).json({ error: "Conversation not found" });
@@ -19,7 +20,7 @@ async function getUserConversations(req, res) {
 
 async function getUsers(req, res) {
   try {
-    const users = await dataBase.getUsers();
+    const users = await db.getUsers();
 
     res.status(200).json(users);
   } catch (error) {
@@ -32,7 +33,7 @@ async function getUsers(req, res) {
 async function getUserFriends(req, res) { 
   try {
     const id = req.params.id;
-    const friends = await dataBase.getUserFriendships(id);
+    const friends = await db.getUserFriendships(id);
 
     res.status(200).json(friends);
   } catch (error) {
@@ -45,13 +46,11 @@ async function createConversation(req, res) {
   try {
     let { title, type, userIds, createdBy } = req.body;
 
-    if (!Array.isArray(userIds)) userIds = [];
-    
-    const DEFAULT_TITLE = "New Chat";  
 
-    // Always recalc title for SINGLE
-    if (type === "SINGLE") {
-      const names = await dataBase.getUsernames(userIds);
+
+    if (type === "SINGLE" || (type === "GROUP" && !title)) {
+      const names = await db.getUsernames(userIds);
+
       if (names.length > 0) {
         title = names[0]; // SINGLE = exactly one name
       }
@@ -74,10 +73,12 @@ async function createConversation(req, res) {
   
     if (!title) title = DEFAULT_TITLE;
 
-    const conversationId = await dataBase.createConversation(title, type, createdBy);
+    const conversationId = await db.createConversation(title, type, createdBy);
 
-    const allMembers = [...userIds, createdBy];
-    await dataBase.addConversationMembers(conversationId, allMembers);
+
+    const allMembers = [...userIds, createdBy]; 
+    await db.addConversationMembers(conversationId, allMembers);
+
 
     res.status(201).json({
       message: "Success",
@@ -92,4 +93,30 @@ async function createConversation(req, res) {
   }
 }
 
-module.exports = { getUserConversations, getUserFriends, getUsers, createConversation };
+async function getMessages(req, res) {
+  const conversationId = req.params.id;
+
+  /*
+  try {
+    const savedMessages = await db.getConversationMessages(conversationId);
+    const unsavedMessages = await redis.getMessagesInConversation(conversationId);
+
+    const allMessages = [...savedMessages, ...unsavedMessages];
+    allMessages.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
+    
+    res.status(200).json(allMessages);
+  }
+  catch(error) {
+    console.error(error);
+    res.status(500).send("Server Error");
+  }
+  */
+}
+
+module.exports = { 
+  getUserConversations, 
+  getUserFriends, 
+  getUsers, 
+  createConversation, 
+  getMessages 
+};

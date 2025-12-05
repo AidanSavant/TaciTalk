@@ -47,8 +47,6 @@ createNewConvoBtn.addEventListener("click", async  (e) => {
   const titleInput = document.getElementById("groupName");
   const titleValue = titleInput.value.trim() || "New Chat"; 
 
-  let typeValue = "SINGLE";
->>>>>>> FranciscoBranch
 
   const checkedBoxes = document.querySelectorAll("#userListContainer input[type='checkbox']:checked");
   const selectedUserIds = Array.from(checkedBoxes).map(checkbox => checkbox.value);
@@ -58,9 +56,6 @@ createNewConvoBtn.addEventListener("click", async  (e) => {
     return;
   }
 
-<<<<<<< HEAD
-
-=======
   if (selectedUserIds.length > 1) {
     alert("You can only select ONE friend for a Single conversation.");
     return;
@@ -196,7 +191,9 @@ populateFriends();
 
 populatingMessages();
 
-const logoutBtn = document.getElementById(".settings-btn");
+
+const logoutBtn = document.getElementById("logout-btn");
+
 logoutBtn.addEventListener("click", (e) => {
   e.preventDefault();
 
