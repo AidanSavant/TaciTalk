@@ -1,11 +1,19 @@
 // Redis Connection
+import dotenv from "dotenv";
 
 import { createClient } from "redis";
 
-//const redisClient = createClint({
-//  url: 'redis://USERNAME:PASSWORD:127.0.0.1:6379'
-//})
-//const redisClient = createClient({});
+dotenv.config({path:'../../../.env'})
+dotenv.config()
+
+const redisClient = createClient({
+   url: process.env.REDIS_URL,
+   socket: {
+       tls: false,
+       servername: process.env.REDIS_HOST,
+   },
+});
+
 
 redisClient.on("error", (err) => console.log("REDIS Failed ", err));
 
