@@ -1,5 +1,5 @@
 const db = require("./DatabaseManager");
-const redis = require("./RedisManager");
+// const redis = require("./RedisManager");
 
 async function getUserConversations(req, res) {
   try {
