@@ -11,8 +11,9 @@ const AuthRouter = require("./src/routers/AuthRouter.js");
 const ConvRouter = require("./src/routers/DashRouter.js");
 
 const db = require("./src/controllers/DatabaseManager.js");
+import * as redis from "./src/controllers/RedisManager.js";
 //const redis = require("./src/controllers/RedisManager.js");
-import redis from "./src/controllers/RedisManager.js";
+
 const WSRouter = require("./src/routers/WSRouter.js");
 
 function parseCookies(cookies) {

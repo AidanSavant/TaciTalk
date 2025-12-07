@@ -41,7 +41,7 @@ async function deleteMessage(msgID) {
   await redisClient.json.del(msgID, { path: "$" });
 }
 
-module.exports = {
+exports = {
   createMessage,
   deleteMessage,
   getMessage,
