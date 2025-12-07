@@ -4,6 +4,7 @@ const userID = localStorage.getItem("currentUserID");
 const newConversationButton = document.getElementById("newConversation")
 const userListContainer = document.getElementById("userListContainer");
 const createNewConvoBtn = document.getElementById("createBtn");
+const profileDisplayBtn = document.getElementById("profile-btn") 
 
 
 
@@ -40,6 +41,12 @@ renderUsers();
 newConversationButton.addEventListener("click", () => {
   newConversationDialog.showModal();
 })
+
+profileDisplayBtn.addEventListener("click", () => {
+  profileDisplay.showModal();
+})
+
+
 
 createNewConvoBtn.addEventListener("click", async  (e) => { 
   e.preventDefault(); 
