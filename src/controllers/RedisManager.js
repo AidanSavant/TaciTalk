@@ -23,7 +23,6 @@ class RedisManager {
     console.log("Connected to Redis");
   }
 
-  // CRUD helpers
   async createMessage(msgJSON) {
     await this.client.json.set(msgJSON.messageID, "$", msgJSON);
   }

@@ -20,9 +20,6 @@ if (!conversationID) {
   console.warn("No conversation ID found in URL");
 }
 
-// -------------------------------
-// 3. Join conversation when connected
-// -------------------------------
 socket.on("connect", () => {
   console.log("Connected:", socket.id);
 
