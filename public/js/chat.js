@@ -58,7 +58,7 @@ function sendMessage() {
 }
 
 socket.on("new_message", (msg) => {
-  console.log("📩 Message Received:", msg);
+  console.log("Message Received:", msg);
   addMessageToUI(msg);
 });
 
