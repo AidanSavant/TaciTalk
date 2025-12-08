@@ -1,6 +1,6 @@
-const db = require("../controllers/DatabaseManager.js");
-const jwt = require("jsonwebtoken");
-const bcrypt = require("bcrypt");
+import db from "../controllers/DatabaseManager.js";
+import jwt from "jsonwebtoken";
+import bcrypt from "bcrypt";
 
 async function register(req, res) {
   const { username, password } = req.body;
@@ -59,7 +59,7 @@ async function login(req, res) {
   res.status(200).json({ message: "Login successful!", token, userId: user.UserID });
 }
 
-module.exports = {
-    register,
-    login,
+export default {
+  register,
+  login,
 };

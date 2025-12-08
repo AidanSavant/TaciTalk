@@ -1,20 +1,23 @@
-require("dotenv").config();
+import dotenv from "dotenv";
+dotenv.config();
 
-const cors = require("cors");
-const path = require("path");
-const express = require("express");
-const jwt = require("jsonwebtoken");
-const { Server } = require("socket.io");
-const { createServer } = require("http");
+import cors from "cors";
+import path from "path";
+import express from "express";
+import jwt from "jsonwebtoken";
+import { Server } from "socket.io";
+import { createServer } from "http";
+import { fileURLToPath } from "url";
 
-const AuthRouter = require("./src/routers/AuthRouter.js");
-const ConvRouter = require("./src/routers/DashRouter.js");
+import AuthRouter from "./src/routers/AuthRouter.js";
+import ConvRouter from "./src/routers/DashRouter.js";
+import WSRouter from "./src/routers/WSRouter.js";
+import db from "./src/controllers/DatabaseManager.js";
+import RedisManager from "./src/controllers/RedisManager.js";
 
-const db = require("./src/controllers/DatabaseManager.js");
-import * as redis from "./src/controllers/RedisManager.js";
-//const redis = require("./src/controllers/RedisManager.js");
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
-const WSRouter = require("./src/routers/WSRouter.js");
 
 function parseCookies(cookies) {
   const parsedCookies = {};
@@ -80,7 +83,7 @@ const io = new Server(httpServer, {
   },
 });
 
-const wsRouter = new WSRouter(io, db, redis);
+const wsRouter = new WSRouter(io, db, RedisManager);
 
 io.on("connection", (socket) => {
   console.log("New client connected: ", socket.id);

@@ -1,4 +1,4 @@
-const mysql = require("mysql2/promise");
+import mysql from "mysql2/promise";
 
 const host = process.env.DB_HOST;
 const user = process.env.DB_USER;
@@ -284,4 +284,4 @@ class DatabaseManager {
   }
 }
 
-module.exports = new DatabaseManager();
+export default new DatabaseManager();

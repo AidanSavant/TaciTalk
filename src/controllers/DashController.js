@@ -1,4 +1,4 @@
-const db = require("./DatabaseManager");
+import db from "./DatabaseManager.js";
 // const redis = require("./RedisManager");
 
 async function getUserConversations(req, res) {
@@ -113,10 +113,10 @@ async function getMessages(req, res) {
   */
 }
 
-module.exports = { 
-  getUserConversations, 
-  getUserFriends, 
-  getUsers, 
-  createConversation, 
-  getMessages 
+export default {
+  getUserConversations,
+  getUserFriends,
+  getUsers,
+  createConversation,
+  getMessages
 };

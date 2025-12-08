@@ -8,41 +8,41 @@ ConversationID
 UserID
 */
 
-const crypto = require("crypto");
+import crypto from "crypto";
 
 class MessageController {
-    constructor(io, db, redis) {
-        this.io = io;
-        this.db = db;
-        this.redis = redis;
+  constructor(io, db, redis) {
+    this.io = io;
+    this.db = db;
+    this.redis = redis;
+  }
+
+  async sendMessage(socket, payload) {
+    if (!socket.userId) {
+      return socket.emit("error", { message: "Unauthorized User!" });
     }
 
-    async sendMessage(socket, payload) {
-        if(!socket.userId) {
-            return socket.emit("error", { message: "Unauthorized User!" });   
-        }
+    const { conversationID, messageType, messageContent } = payload;
 
-        const { conversationID, messageType, messageContent } = payload;
-    
-        if(!conversationID || !messageType || !messageContent) {
-            return socket.emit("error", { message: "Invalid message payload!" });
-        }
+    if (!conversationID || !messageType || !messageContent) {
+      return socket.emit("error", { message: "Invalid message payload!" });
+    }
 
-        const messageId = `${crypto.randomBytes(16).toString("hex")}`;
-        const timestamp = new Date().toISOString().slice(0,19).replace('T', ' ');;
-        const expiresAt = timestamp + 24 * 3600; // 24 hours from now
-    
-        const message = {
-            messageID: messageId,
-            timestamp: timestamp,
-            messageType: messageType,
-            messageContent: messageContent,
-            conversationID: conversationID,
-            userID: socket.userId,
-            expiresAt: expiresAt
-        };
+    const messageId = `${crypto.randomBytes(16).toString("hex")}`;
+    const timestamp = new Date().toISOString().slice(0, 19).replace("T", " ");
+    const expiresAt = timestamp + 24 * 3600; // 24 hours from now
 
-        /*
+    const message = {
+      messageID: messageId,
+      timestamp: timestamp,
+      messageType: messageType,
+      messageContent: messageContent,
+      conversationID: conversationID,
+      userID: socket.userId,
+      expiresAt: expiresAt,
+    };
+
+    /*
         await this.redis.setExpiringMessage(
             `message_${messageId}`,
             24 * 3600,
@@ -50,23 +50,23 @@ class MessageController {
         );
         */
 
-        this.io.to(`conversation_${conversationID}`).emit("new_message", message);
-        return socket.emit("message_sent", { messageID: messageId });
+    this.io.to(`conversation_${conversationID}`).emit("new_message", message);
+    return socket.emit("message_sent", { messageID: messageId });
+  }
+
+  async joinConversation(socket, payload) {
+    if (!socket.userId) {
+      return socket.emit("error", { message: "Unauthorized User!" });
     }
 
-    async joinConversation(socket, payload) {
-        if(!socket.userId) {
-            return socket.emit("error", { message: "Unauthorized User!" });   
-        }
+    const { conversationID } = payload;
 
-        const { conversationID } = payload;
-
-        if(!conversationID) {
-            return socket.emit("error", { message: "Invalid conversation ID!" });
-        }
-
-        socket.join(`conversation_${conversationID}`);
+    if (!conversationID) {
+      return socket.emit("error", { message: "Invalid conversation ID!" });
     }
+
+    socket.join(`conversation_${conversationID}`);
+  }
 }
 
-module.exports = MessageController;
+export default MessageController;

@@ -1,49 +1,47 @@
-// Redis Connection
+import { createClient } from "redis";
 import dotenv from "dotenv";
 
-import { createClient } from "redis";
-
 dotenv.config({ path: "../../../.env" });
-dotenv.config();
 
-const redisClient = createClient({
-  url: process.env.REDIS_URL,
-  socket: {
-    tls: false,
-    servername: process.env.REDIS_HOST,
-  },
-});
+class RedisManager {
+  constructor() {
+    this.client = createClient({
+      url: process.env.REDIS_URL,
+      socket: {
+        tls: false,
+        servername: process.env.REDIS_HOST,
+      },
+    });
 
-redisClient.on("error", (err) => console.log("REDIS Failed ", err));
+    this.client.on("error", (err) => {
+      console.error("Redis Error:", err);
+    });
+  }
 
-await redisClient.connect();
+  async connect() {
+    await this.client.connect();
+    console.log("Connected to Redis");
+  }
 
-console.log("Connected to redis");
-await redisClient.FLUSHALL();
+  // CRUD helpers
+  async createMessage(msgJSON) {
+    await this.client.json.set(msgJSON.messageID, "$", msgJSON);
+  }
 
-async function createMessage(msgJSON) {
-  let msgID = msgJSON.messageID;
-  await redisClient.json.set(msgID, "$", msgJSON);
+  async getMessage(messageID) {
+    return this.client.json.get(messageID, { path: "$" });
+  }
+
+  async editMessage(messageID, messageType, messageContent) {
+    const oldMsg = await this.getMessage(messageID);
+    oldMsg.messageType = messageType;
+    oldMsg.messageContent = messageContent;
+    return this.client.json.set(messageID, "$", oldMsg);
+  }
+
+  async deleteMessage(messageID) {
+    await this.client.json.del(messageID);
+  }
 }
 
-async function getMessage(msgID) {
-  return await redisClient.json.get(msgID, { path: "$" });
-}
-
-async function editMessage(msgID, messageType, messageContent) {
-  let oldMsg = redisClient.json.get(msgID, { path: "$" });
-  oldMsg.messageType = messageType;
-  oldMsg.messageContent = messageContent;
-  await redisClient.json.set(msgID, "$", oldMsg);
-}
-
-async function deleteMessage(msgID) {
-  await redisClient.json.del(msgID, { path: "$" });
-}
-
-exports = {
-  createMessage,
-  deleteMessage,
-  getMessage,
-  editMessage,
-};
+export default new RedisManager();
