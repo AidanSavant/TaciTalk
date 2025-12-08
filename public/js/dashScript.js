@@ -42,9 +42,10 @@ newConversationButton.addEventListener("click", () => {
   newConversationDialog.showModal();
 })
 
-profileDisplayBtn.addEventListener("click", () => {
-  profileDisplay.showModal();
-})
+// profileDisplayBtn.addEventListener("click", () => {
+//   profileDisplay.showModal();
+// })
+
 
 
 
@@ -58,18 +59,19 @@ createNewConvoBtn.addEventListener("click", async  (e) => {
   const checkedBoxes = document.querySelectorAll("#userListContainer input[type='checkbox']:checked");
   const selectedUserIds = Array.from(checkedBoxes).map(checkbox => checkbox.value);
 
+  let typeValue;
+  
   if (selectedUserIds.length === 0) {
     alert("Please select at least one friend.");
     return;
   }
-
-  if (selectedUserIds.length > 1) {
-    alert("You can only select ONE friend for a Single conversation.");
-    return;
-  }
-  if (selectedUserIds.length > 1) {
+  
+  if (selectedUserIds.length === 1) {
+    typeValue = "SINGLE";
+  } else if (selectedUserIds.length > 1) {
     typeValue = "GROUP";
   }
+
   
   await createNewConversation(titleValue, typeValue, selectedUserIds,userID);
   
@@ -152,11 +154,11 @@ function renderConversationItem(convo) {
   div.dataset.convoId = convo.ConversationID;
 
   div.innerHTML = `
-    <div class="conversation-title">${convo.ConvoTitle}</div>>
+    <div class="conversation-title">${convo.ConvoTitle}</div>
   `;
 
   div.addEventListener("click", () => {
-    loadMessagesForConversation(convo.ConversationID);
+      window.location.href = `chat.html?conversationID=${convo.ConversationID}`;
   });
 
   return div;
