@@ -1,12 +1,10 @@
+import dotenv from "dotenv";
+dotenv.config();
+
 import { createClient } from "redis";
 
 class RedisManager {
   constructor() {
-    this.client = null;
-  }
-
-  async connect() {
-    if(!this.client) {
       this.client = createClient({
         url: process.env.REDIS_URL,
         socket: {
@@ -18,8 +16,9 @@ class RedisManager {
       this.client.on("error", (err) => {
         console.error("Redis Error:", err);
       });
-    }
+  }
 
+  async connect() {
     await this.client.connect();
     console.log("Connected to Redis");
   }

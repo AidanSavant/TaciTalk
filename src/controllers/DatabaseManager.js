@@ -1,18 +1,15 @@
+import dotenv from "dotenv";
+dotenv.config();
+
 import mysql from "mysql2/promise";
 
-const host = process.env.DB_HOST;
-const user = process.env.DB_USER;
-const password = process.env.DB_PASS;
-const database = process.env.DATABASE;
-const port = process.env.DB_PORT;
-
 const dbConfig = {
-  host,
-  user,
-  password,
-  database,
-  port,
-  ssl: {rejectUnauthorized: false },
+  host: process.env.DB_HOST,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASS,
+  database: process.env.DATABASE,
+  port: process.env.DB_PORT,
+  ssl: { rejectUnauthorized: false },
   waitForConnections: true,
   connectionLimit: 10,
   queueLimit: 0,

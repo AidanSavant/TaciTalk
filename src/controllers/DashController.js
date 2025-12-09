@@ -8,7 +8,7 @@ async function getUserConversations(req, res) {
     const conversation = await db.getUserConversations(id);
 
     if (!conversation || conversation.length === 0) {
-      res.status(200).json(conversation || []);
+      return res.status(200).json(conversation || []);
     }
 
     res.status(200).json(conversation);
