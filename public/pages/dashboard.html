@@ -29,6 +29,26 @@
                 <button type="button" id="closeBtn">Cancel</button>
               </form>
         </dialog>
+        <dialog id="profileDisplay">
+            <p id="profile-welcome"></p>
+            <form method="dialog">
+                <div id="usernameEdit">
+                    <label>New Username:</label>
+                    <input type="text" id="newUsername" />
+                </div>
+                <div id="passwordEdit">
+                    <label>New Password:</label>
+                    <input type="password" id="newPassword" />
+                </div>
+                <div id="confirmPasswordEdit">
+                    <label>Confirm Password:</label>
+                    <input type="password" id="confirmPassword" />
+                </div>
+                <div id="submitEdit">
+                    <button type="submit">Submit</button>
+                </div>
+            </form>
+        </dialog>
 
         <!-- TOP BAR -->
         <div class="top-bar">
@@ -51,14 +71,14 @@
                 <div class="bottom-buttons">
                     <div class="profile-btn">Profile</div>
                     <div class="settings-btn" id="logout-btn">Logout</div>
+                    
+                    
+                    
                 </div>
             </div>
 
-            <div class="chat-section">
-                <div class="chat-area">
-                    <div class="msg">Here are some words...</div>
-                    <div class="msg right">Some more words on the right...</div>
-                    <div class="msg">And another message.</div>
+            <div id="chat-section" class="chat-section">
+                <div class="chat-area">    
                 </div>
                 <div class="bottom-chat-area">
                     <input type="text" id="messageInput" class="messageInput" placeholder="Type your message..." />
@@ -68,7 +88,8 @@
             
             
         </div>
-
+        <script src="/socket.io/socket.io.js"></script>
+        <script src="../js/chat.js"></script>
         <script src="../js/dashScript.js"></script>
     </body>
 </html>

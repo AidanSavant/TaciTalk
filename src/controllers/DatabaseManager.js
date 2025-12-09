@@ -1,4 +1,7 @@
-const mysql = require("mysql2/promise");
+import dotenv from "dotenv";
+dotenv.config();
+
+import mysql from "mysql2/promise";
 
 const host = process.env.DB_HOST;
 const user = process.env.DB_USER;
@@ -12,10 +15,15 @@ const dbConfig = {
   password,
   database,
   port,
+  ssl: {
+      rejectUnauthorized: false
+    },
   waitForConnections: true,
   connectionLimit: 10,
   queueLimit: 0,
 };
+
+console.log("🔍 DB CONFIG LOADED:", dbConfig);
 
 let pool;
 try {
@@ -284,4 +292,4 @@ class DatabaseManager {
   }
 }
 
-module.exports = new DatabaseManager();
+export default new DatabaseManager();

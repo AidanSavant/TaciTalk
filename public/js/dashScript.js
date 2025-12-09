@@ -4,6 +4,7 @@ const userID = localStorage.getItem("currentUserID");
 const newConversationButton = document.getElementById("newConversation")
 const userListContainer = document.getElementById("userListContainer");
 const createNewConvoBtn = document.getElementById("createBtn");
+const profileDisplayBtn = document.getElementById("profile-btn") 
 
 
 
@@ -23,6 +24,7 @@ async function renderUsers() {
     const checkbox = document.createElement('input')
     checkbox.type = 'checkbox';
     checkbox.value = user.UserID;
+
     checkbox.name = "selectedUsers";
     userElement.appendChild(checkbox);
     userElement.append(`${user.Username}`);
@@ -40,31 +42,36 @@ newConversationButton.addEventListener("click", () => {
   newConversationDialog.showModal();
 })
 
+// profileDisplayBtn.addEventListener("click", () => {
+//   profileDisplay.showModal();
+// })
+
+
+
+
 createNewConvoBtn.addEventListener("click", async  (e) => { 
   e.preventDefault(); 
 
   const titleInput = document.getElementById("groupName");
   const titleValue = titleInput.value.trim() || "New Chat"; 
 
-  let typeValue = "SINGLE";
-
 
   const checkedBoxes = document.querySelectorAll("#userListContainer input[type='checkbox']:checked");
   const selectedUserIds = Array.from(checkedBoxes).map(checkbox => checkbox.value);
 
+  let typeValue;
+  
   if (selectedUserIds.length === 0) {
     alert("Please select at least one friend.");
     return;
   }
-
-
-  if (selectedUserIds.length > 1) {
-    alert("You can only select ONE friend for a Single conversation.");
-    return;
-  }
-  if (selectedUserIds.length > 1) {
+  
+  if (selectedUserIds.length === 1) {
+    typeValue = "SINGLE";
+  } else if (selectedUserIds.length > 1) {
     typeValue = "GROUP";
   }
+
   
   await createNewConversation(titleValue, typeValue, selectedUserIds,userID);
   
@@ -75,53 +82,73 @@ createNewConvoBtn.addEventListener("click", async  (e) => {
   
 })
 
-async function createNewConversation(conversationTitle, conversationType, userList, currentUserID) { 
-  
+async function createNewConversation(conversationTitle, conversationType, userList, currentUserID) {
   const payload = {
-    title: conversationTitle, 
-    type: conversationType, 
-    userIds: userList,  
-    createdBy: currentUserID   
+    title: conversationTitle,
+    type: conversationType,
+    userIds: userList,
+    createdBy: currentUserID
   };
-  
-  console.log(JSON.stringify(payload));
-  
-  const response = await fetch(`/api/newConversation`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payload)
-  });
 
-  const rawData = await response.json();
-  console.log("Server response:", rawData);
+  try {
+    const response = await fetch(`/api/newConversation`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      console.error("Failed to create conversation:", error);
+      alert("Error creating conversation.");
+      return null;
+    }
+
+    const rawData = await response.json();
+    console.log("Conversation created:", rawData);
+
+
+    await loadConversationList();
+
   
+    if (rawData.conversationId) {
+      window.location.href = `dashboard.html?conversationID=${rawData.conversationId}`;
+    }
+
+    return rawData;
+  } catch (err) {
+    console.error("Request error:", err);
+    alert("Network error creating conversation.");
+    return null;
+  }
 }
 
-async function populatingMessages() {
-  sidebar.innerHTML = "";
+
+// async function populatingMessages() {
+//   sidebar.innerHTML = "";
   
 
-  if (!userID) {
-    console.warn("No User ID found. Redirecting to login...");
-    return;
-  }
+//   if (!userID) {
+//     console.warn("No User ID found. Redirecting to login...");
+//     return;
+//   }
 
-  const response = await fetch(`/api/conversations/${userID}`);
-  const rawData = await response.json();
-  const message = Array.isArray(rawData) ? rawData : [rawData];
+//   const response = await fetch(`/api/conversations/${userID}`);
+//   const rawData = await response.json();
+//   const message = Array.isArray(rawData) ? rawData : [rawData];
   
-  if (message.length === 0) { 
-    sidebar.innerHTML = "<p>No messages found</p>";
-    return;
-  }
+//   if (message.length === 0) { 
+//     sidebar.innerHTML = "<p>No messages found</p>";
+//     return;
+//   }
 
-  message.forEach((message) => {
-    const convoTitleElement = document.createElement("div");
-    convoTitleElement.classList.add("message-title");
-    convoTitleElement.textContent = message.ConvoTitle;
-    sidebar.appendChild(convoTitleElement);
-  });
-}
+//   message.forEach((message) => {
+//     const convoTitleElement = document.createElement("div");
+//     convoTitleElement.classList.add("conversation-item");
+//     convoTitleElement.textContent = message.ConvoTitle;
+//     sidebar.appendChild(convoTitleElement);
+//   });
+// }
 
 async function loadConversationList() {
   const response = await fetch(`/api/conversations/${userID}`, {
@@ -140,6 +167,8 @@ async function loadConversationList() {
   });
 }
 
+loadConversationList();
+
 
 function renderConversationItem(convo) {
   const div = document.createElement("div");
@@ -147,11 +176,11 @@ function renderConversationItem(convo) {
   div.dataset.convoId = convo.ConversationID;
 
   div.innerHTML = `
-    <div class="conversation-title">${convo.ConvoTitle}</div>>
+    <div class="conversation-title">${convo.ConvoTitle}</div>
   `;
 
   div.addEventListener("click", () => {
-    loadMessagesForConversation(convo.ConversationID);
+      window.location.href = `dashboard.html?conversationID=${convo.ConversationID}`;
   });
 
   return div;
@@ -191,9 +220,11 @@ async function populateFriends() {
 
 populateFriends();
 
-populatingMessages();
+//populatingMessages();
+
 
 const logoutBtn = document.getElementById("logout-btn");
+
 logoutBtn.addEventListener("click", (e) => {
   e.preventDefault();
 

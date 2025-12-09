@@ -1,4 +1,4 @@
-const MessageController = require("../controllers/MessageController");
+import MessageController from "../controllers/MessageController.js";
 
 class WSRouter {
     constructor(io, db, redis) {
@@ -23,4 +23,4 @@ class WSRouter {
     }
 }
 
-module.exports = WSRouter;
+export default WSRouter;

@@ -1,5 +1,5 @@
-const db = require("./DatabaseManager");
-const redis = require("./RedisManager");
+import db from "./DatabaseManager.js";
+// const redis = require("./RedisManager");
 
 async function getUserConversations(req, res) {
   try {
@@ -8,7 +8,7 @@ async function getUserConversations(req, res) {
     const conversation = await db.getUserConversations(id);
 
     if (!conversation || conversation.length === 0) {
-      return res.status(404).json({ error: "Conversation not found" });
+      res.status(200).json(conversation || []);
     }
 
     res.status(200).json(conversation);
@@ -45,29 +45,46 @@ async function getUserFriends(req, res) {
 async function createConversation(req, res) {
   try {
     let { title, type, userIds, createdBy } = req.body;
-    
-    if (!Array.isArray(userIds)) userIds = [];
-    console.log(userIds)
+
+     const DEFAULT_TITLE = "New Chat";
 
     if (type === "SINGLE" || (type === "GROUP" && !title)) {
       const names = await db.getUsernames(userIds);
+
       if (names.length > 0) {
-        title = names.join(", ");
+        title = names[0]; 
       }
     }
 
-    if (!title) title = "New Conversation";
+  
+    if (type === "GROUP") {
+      const userProvidedCustomTitle = title && title !== DEFAULT_TITLE;
+
+      if (!userProvidedCustomTitle) {
+        const names = await db.getUsernames(userIds);
+        if (names.length > 0) {
+          title = names.join(", "); 
+        } else {
+          title = DEFAULT_TITLE;
+        }
+      }
+    }
+
+  
+    if (!title) title = DEFAULT_TITLE;
 
     const conversationId = await db.createConversation(title, type, createdBy);
+
 
     const allMembers = [...userIds, createdBy]; 
     await db.addConversationMembers(conversationId, allMembers);
 
-    res.status(201).json({ 
-      message: "Success", 
-      conversationId, 
+
+    res.status(201).json({
+      message: "Success",
+      conversationId,
       title,
-      membersAdded: allMembers.length 
+      membersAdded: allMembers.length
     });
 
   } catch (error) {
@@ -96,10 +113,10 @@ async function getMessages(req, res) {
   */
 }
 
-module.exports = { 
-  getUserConversations, 
-  getUserFriends, 
-  getUsers, 
-  createConversation, 
-  getMessages 
+export default {
+  getUserConversations,
+  getUserFriends,
+  getUsers,
+  createConversation,
+  getMessages
 };
