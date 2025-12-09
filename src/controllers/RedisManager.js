@@ -1,24 +1,25 @@
 import { createClient } from "redis";
-import dotenv from "dotenv";
-
-dotenv.config({ path: "../../../.env" });
 
 class RedisManager {
   constructor() {
-    this.client = createClient({
-      url: process.env.REDIS_URL,
-      socket: {
-        tls: false,
-        servername: process.env.REDIS_HOST,
-      },
-    });
-
-    this.client.on("error", (err) => {
-      console.error("Redis Error:", err);
-    });
+    this.client = null;
   }
 
   async connect() {
+    if (!this.client) {
+      this.client = createClient({
+        url: process.env.REDIS_URL,
+        socket: {
+          tls: false,
+          servername: process.env.REDIS_HOST,
+        },
+      });
+
+      this.client.on("error", (err) => {
+        console.error("Redis Error:", err);
+      });
+    }
+
     await this.client.connect();
     console.log("Connected to Redis");
   }
@@ -30,7 +31,6 @@ class RedisManager {
   async getMessage(messageID) {
     return this.client.json.get(messageID, { path: "$" });
   }
-
 
   async editMessage(messageID, messageType, messageContent) {
     const oldMsg = await this.getMessage(messageID);

@@ -14,10 +14,10 @@ import ConvRouter from "./src/routers/DashRouter.js";
 import WSRouter from "./src/routers/WSRouter.js";
 import db from "./src/controllers/DatabaseManager.js";
 import RedisManager from "./src/controllers/RedisManager.js";
+await RedisManager.connect();
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-
 
 function parseCookies(cookies) {
   const parsedCookies = {};
