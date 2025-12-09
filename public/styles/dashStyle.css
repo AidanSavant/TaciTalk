@@ -71,7 +71,6 @@ body {
     border-right: 1px solid #1f1f1f;
     display: flex;
     flex-direction: column;
-    overflow-y: auto;
 }
 
 .conversation {
@@ -91,6 +90,7 @@ body {
 .bottom-buttons {
     margin-top: auto;
     display: flex;
+    position: sticky;
     justify-content: space-between;
     padding: 20px;
 }
@@ -128,17 +128,15 @@ body {
     gap: 22px;
 }
 
-.bottom-chat-area{
-    flex-shrink: 0;           /* Prevents it from shrinking if chat is full */
+.bottom-chat-area {
+    flex-shrink: 0; /* Prevents it from shrinking if chat is full */
     padding: 20px;
-    background: #141414;      /* Slightly distinct background */
+    background: #141414; /* Slightly distinct background */
     border-top: 1px solid #1f1f1f;
-    display: flex;            /* Aligns input and button side-by-side */
+    display: flex; /* Aligns input and button side-by-side */
     gap: 10px;
     align-items: center;
 }
-
-
 
 .msg {
     max-width: 60%;
@@ -199,7 +197,7 @@ body {
     border-color: #3b82f6;
 }
 
-.newConversation{
+.newConversation {
     padding: 10px;
     background: #1f1f1f;
     border-radius: 10px;
@@ -214,7 +212,7 @@ body {
     border-color: #3b82f6;
 }
 
-.no-friends{
+.no-friends {
     padding: 10px;
     background: #1f1f1f;
     border-radius: 10px;
@@ -224,7 +222,13 @@ body {
     transition: 0.2s;
 }
 
-.messageInput{
+.messageholder {
+    margin-top: 10px;
+    overflow-y: auto;
+    max-height: 78vh;
+}
+
+.messageInput {
     flex-grow: 1;
     padding: 10px;
     background: #1f1f1f;
@@ -235,7 +239,7 @@ body {
     transition: 0.2s;
 }
 
-.sendMessageBtn{
+.sendMessageBtn {
     padding: 10px;
     background: #1f1f1f;
     border-radius: 10px;
@@ -254,7 +258,7 @@ body {
 dialog:not(:open) {
     display: none !important;
     opacity: 0;
-    pointer-events: none;;
+    pointer-events: none;
 }
 
 /* === Dialog Window === */
@@ -338,7 +342,9 @@ dialog:not(:open) {
     border: none;
     cursor: pointer;
     font-size: 0.9rem;
-    transition: background 0.2s, transform 0.15s;
+    transition:
+        background 0.2s,
+        transform 0.15s;
 }
 
 /* Create button – highlight color */
@@ -372,4 +378,3 @@ dialog:not(:open) {
     flex-direction: column;
     gap: 16px;
 }
-
