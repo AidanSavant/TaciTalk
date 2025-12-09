@@ -6,7 +6,7 @@ class RedisManager {
   }
 
   async connect() {
-    if (!this.client) {
+    if(!this.client) {
       this.client = createClient({
         url: process.env.REDIS_URL,
         socket: {
