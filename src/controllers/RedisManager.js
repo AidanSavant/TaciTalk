@@ -39,7 +39,6 @@ class RedisManager {
     return this.client.json.set(messageID, "$", oldMsg);
   }
 
-
   async deleteMessage(messageID) {
     await this.client.json.del(messageID);
   }
