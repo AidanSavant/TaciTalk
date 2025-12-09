@@ -124,31 +124,6 @@ async function createNewConversation(conversationTitle, conversationType, userLi
 }
 
 
-// async function populatingMessages() {
-//   sidebar.innerHTML = "";
-  
-
-//   if (!userID) {
-//     console.warn("No User ID found. Redirecting to login...");
-//     return;
-//   }
-
-//   const response = await fetch(`/api/conversations/${userID}`);
-//   const rawData = await response.json();
-//   const message = Array.isArray(rawData) ? rawData : [rawData];
-  
-//   if (message.length === 0) { 
-//     sidebar.innerHTML = "<p>No messages found</p>";
-//     return;
-//   }
-
-//   message.forEach((message) => {
-//     const convoTitleElement = document.createElement("div");
-//     convoTitleElement.classList.add("conversation-item");
-//     convoTitleElement.textContent = message.ConvoTitle;
-//     sidebar.appendChild(convoTitleElement);
-//   });
-// }
 
 async function loadConversationList() {
   const response = await fetch(`/api/conversations/${userID}`, {
@@ -220,7 +195,6 @@ async function populateFriends() {
 
 populateFriends();
 
-//populatingMessages();
 
 
 const logoutBtn = document.getElementById("logout-btn");
