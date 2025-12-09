@@ -46,10 +46,10 @@ async function createConversation(req, res) {
   try {
     let { title, type, userIds, createdBy } = req.body;
     
-   const userProvidedCustomTitle = title?.trim() || "";
-    
-        
-        if (!userProvidedCustomTitle) {
+   title = title?.trim() || "";
+   
+  
+        if (!title) {
           const names = await db.getUsernames(userIds);
     
           if (type === "SINGLE") {
@@ -58,8 +58,8 @@ async function createConversation(req, res) {
             title = names.join(", ");
           }
         }
-        
-    if (!title) title = DEFAULT_TITLE;
+    
+    console.log("FINAL TITLE:", title);
 
     const conversationId = await db.createConversation(title, type, createdBy);
 

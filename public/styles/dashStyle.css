@@ -1,3 +1,10 @@
+/* =========================================================
+   GLOBAL STYLES
+========================================================= */
+:root {
+    --accent-color: #3b82f6;
+}
+
 * {
     margin: 0;
     padding: 0;
@@ -13,9 +20,11 @@ body {
     flex-direction: column;
 }
 
-/* TOP BAR */
+/* =========================================================
+   TOP BAR
+========================================================= */
 .top-bar {
-    background: #141414;
+    background: var(--accent-color);
     border-bottom: 1px solid #1f1f1f;
     padding: 12px 20px;
     display: flex;
@@ -25,16 +34,16 @@ body {
 }
 
 .search-box input {
+    width: 220px;
     padding: 10px 12px;
     background: #1f1f1f;
     border: none;
-    color: #e5e5e5;
     border-radius: 8px;
-    width: 220px;
+    color: #e5e5e5;
 }
 
 .search-box input:focus {
-    outline: 2px solid #3b82f6;
+    outline: 2px solid var(--accent-color);
 }
 
 .friends-list {
@@ -48,24 +57,28 @@ body {
     border: 1px solid #2a2a2a;
     border-radius: 10px;
     cursor: pointer;
-    transition: 0.2s;
     color: #cccccc;
+    transition: 0.2s;
     font-size: 14px;
 }
 
 .friend:hover {
     background: #2a2a2a;
-    border-color: #3b82f6;
+    border-color: var(--accent-color);
 }
 
-/* LAYOUT GRID */
+/* =========================================================
+   MAIN LAYOUT GRID
+========================================================= */
 .main-grid {
     display: grid;
     grid-template-columns: 260px 1fr;
     height: calc(100vh - 60px);
 }
 
-/* LEFT SIDEBAR */
+/* =========================================================
+   SIDEBAR
+========================================================= */
 .sidebar {
     background: #141414;
     border-right: 1px solid #1f1f1f;
@@ -73,26 +86,82 @@ body {
     flex-direction: column;
 }
 
-.conversation {
-    padding: 18px 20px;
-    border-bottom: 1px solid #1f1f1f;
+.newConversation {
+    padding: 10px;
+    background: #1f1f1f;
+    border-radius: 10px;
+    border: 1px solid #2a2a2a;
     font-size: 15px;
-    color: #d1d1d1;
-    cursor: pointer;
+    color: #cccccc;
+    margin-top: 10px;
     transition: 0.2s;
 }
 
-.conversation:hover {
-    background: #1c1c1c;
-    color: #ffffff;
+.newConversation:hover {
+    background: #262626;
+    border-color: var(--accent-color);
 }
 
+/* Conversation List Container */
+.messageholder {
+    margin-top: 10px;
+    overflow-y: auto;
+    max-height: 78vh;
+    
+    /*so that it works on firefox*/
+    scrollbar-width: thin;
+    scrollbar-color: #555 #1a1a1a;
+  }
+  
+  /* so that it works on chrome type browers*/
+  .messageholder::-webkit-scrollbar {
+    width: 10px;
+  }
+  .messageholder::-webkit-scrollbar-track {
+    background: #1a1a1a;
+    border-radius: 10px;
+  }
+  .messageholder::-webkit-scrollbar-thumb {
+    background: var(--accent-color);
+    border-radius: 10px;
+    border: 2px solid #1a1a1a;
+  }
+
+/* Single conversation preview */
+.conversation-item {
+    padding: 10px;
+    background: #1f1f1f;
+    border-radius: 10px;
+    border: 1px solid #2a2a2a;
+    color: #cccccc;
+    font-size: 15px;
+    margin-top: 10px;
+    transition: 0.2s;
+    cursor: pointer;
+}
+
+.conversation-item:hover {
+    background: #262626;
+    border-color: var(--accent-color);
+}
+
+.conversation-item.active{
+  background: var(--accent-color);
+  color: white;
+  box-shadow: 0 0 0 1px rgba(255,255,255,0.08) inset;
+}
+
+
+/* Sticky Sidebar Buttons */
 .bottom-buttons {
     margin-top: auto;
-    display: flex;
-    position: sticky;
-    justify-content: space-between;
     padding: 20px;
+    position: sticky;
+    bottom: 0;
+    background: var(--accent-color);
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
 }
 
 .profile-btn,
@@ -109,10 +178,12 @@ body {
 .profile-btn:hover,
 .settings-btn:hover {
     background: #262626;
-    border-color: #3b82f6;
+    border-color: var(--accent-color);
 }
 
-/* CHAT AREA */
+/* =========================================================
+   CHAT SECTION
+========================================================= */
 .chat-section {
     display: flex;
     flex-direction: column;
@@ -122,20 +193,10 @@ body {
 
 .chat-area {
     flex-grow: 1;
-    overflow-y: auto;
     display: flex;
     flex-direction: column;
+    overflow-y: auto;
     gap: 22px;
-}
-
-.bottom-chat-area {
-    flex-shrink: 0; /* Prevents it from shrinking if chat is full */
-    padding: 20px;
-    background: #141414; /* Slightly distinct background */
-    border-top: 1px solid #1f1f1f;
-    display: flex; /* Aligns input and button side-by-side */
-    gap: 10px;
-    align-items: center;
 }
 
 .msg {
@@ -144,198 +205,77 @@ body {
     background: #1a1a1a;
     border-radius: 12px;
     border: 1px solid #262626;
-    font-size: 15px;
     color: #e5e5e5;
+    font-size: 15px;
 }
 
-.right {
+.msg.right {
     margin-left: auto;
     background: #15376e;
-    border: 1px solid #2563eb;
+    border: 1px solid var(--accent-color);
     color: #ffffff;
 }
 
-/* MOBILE */
-@media (max-width: 700px) {
-    .main-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .sidebar {
-        display: none;
-    }
-}
-
-.message {
-    padding: 10px;
-    background: #1f1f1f;
-    border-radius: 10px;
-    border: 1px solid #2a2a2a;
-    font-size: 15px;
-    color: #cccccc;
-    transition: 0.2s;
-}
-
-.message:hover {
-    background: #262626;
-    border-color: #3b82f6;
-}
-
-.conversation-item {
-    padding: 10px;
-    background: #1f1f1f;
-    border-radius: 10px;
-    border: 1px solid #2a2a2a;
-    font-size: 15px;
-    color: #cccccc;
-    transition: 0.2s;
-    margin-top: 10px;
-}
-
-.conversation-item:hover {
-    background: #262626;
-    border-color: #3b82f6;
-}
-
-.newConversation {
-    padding: 10px;
-    background: #1f1f1f;
-    border-radius: 10px;
-    border: 1px solid #2a2a2a;
-    font-size: 15px;
-    color: #cccccc;
-    transition: 0.2s;
-}
-
-.newConversation:hover {
-    background: #262626;
-    border-color: #3b82f6;
-}
-
-.no-friends {
-    padding: 10px;
-    background: #1f1f1f;
-    border-radius: 10px;
-    border: 1px solid #2a2a2a;
-    font-size: 15px;
-    color: #cccccc;
-    transition: 0.2s;
-}
-
-.messageholder {
-    margin-top: 10px;
-    overflow-y: auto;
-    max-height: 78vh;
+/* Bottom Message Bar */
+.bottom-chat-area {
+    display: flex;
+    gap: 10px;
+    background: #141414;
+    border-top: 1px solid #1f1f1f;
+    flex-shrink: 0;
 }
 
 .messageInput {
     flex-grow: 1;
-    padding: 10px;
     background: #1f1f1f;
-    border-radius: 10px;
     border: 1px solid #2a2a2a;
-    font-size: 15px;
+    border-radius: 10px;
+    padding: 10px;
     color: #cccccc;
-    transition: 0.2s;
 }
 
 .sendMessageBtn {
     padding: 10px;
-    background: #1f1f1f;
-    border-radius: 10px;
+    background: var(--accent-color);
     border: 1px solid #2a2a2a;
-    font-size: 15px;
+    border-radius: 10px;
     color: #cccccc;
     transition: 0.2s;
 }
 
 .sendMessageBtn:hover {
     background: #262626;
-    border-color: #3b82f6;
+    border-color: var(--accent-color);
 }
 
-/* === Dialog Backdrop === */
+/* =========================================================
+   DIALOG WINDOWS
+========================================================= */
 dialog:not(:open) {
     display: none !important;
-    opacity: 0;
     pointer-events: none;
 }
 
-/* === Dialog Window === */
-#newConversationDialog {
+#newConversationDialog,
+#profilebtnDialog {
     border: none;
-    padding: 24px 28px;
-    border-radius: 14px;
     background: #1a1a1a;
-    color: #e5e5e5;
+    border-radius: 14px;
+    padding: 24px 28px;
     width: 380px;
     max-width: 90%;
-    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.45);
+    color: #e5e5e5;
     display: flex;
     flex-direction: column;
     gap: 18px;
-    font-family: "Inter", sans-serif;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.45);
 }
 
-/* === Title === */
 #newConversationDialog h3 {
-    margin: 0;
     font-size: 1.4rem;
-    font-weight: 600;
     color: #f1f1f1;
 }
 
-/* === Radio choices === */
-#newConversationDialog label {
-    font-size: 0.9rem;
-    margin-right: 14px;
-    cursor: pointer;
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-}
-
-/* === Inputs and Sections === */
-#newConversationDialog input[type="text"] {
-    width: 100%;
-    padding: 10px 12px;
-    background: #262626;
-    border: 1px solid #3a3a3a;
-    border-radius: 8px;
-    color: #fff;
-    font-size: 0.95rem;
-}
-
-#newConversationDialog input[type="text"]::placeholder {
-    color: #999;
-}
-
-/* === Friend Selector Header === */
-#friendSelector p {
-    margin-bottom: 6px;
-    font-size: 0.9rem;
-    color: #cfcfcf;
-}
-
-/* === Scroll list area === */
-.scroll-menu {
-    height: 180px;
-    overflow-y: auto;
-    background: #202020;
-    border: 1px solid #333;
-    border-radius: 8px;
-    padding: 8px;
-}
-
-.scroll-menu::-webkit-scrollbar {
-    width: 8px;
-}
-.scroll-menu::-webkit-scrollbar-thumb {
-    background: #444;
-    border-radius: 4px;
-}
-
-/* === Buttons === */
 #newConversationDialog button {
     padding: 10px 14px;
     border-radius: 8px;
@@ -347,20 +287,67 @@ dialog:not(:open) {
         transform 0.15s;
 }
 
-/* Create button – highlight color */
-#createBtn {
-    background: #4e89ff;
+#profilebtnDialog button {
+    padding: 10px 14px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition:
+        background 0.2s,
+        transform 0.15s;
+}
+
+.user-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;            
+    margin-right: 12px;  
+    margin-bottom: 8px;  
+}
+
+.user-item:hover {
+    background: #262626;
+    border-color: var(--accent-color);
+    cursor: pointer;
+}
+
+#newConversationDialog input[type="text"],
+#profilebtnDialog input[type="text"],
+#profilebtnDialog input[type="password"] {
+    width: 100%;
+    padding: 10px 12px;
+    background: #262626;
+    border: 1px solid #3a3a3a;
+    border-radius: 8px;
+    color: #fff;
+}
+
+#createBtn{
+    background: var(--accent-color);
     color: white;
 }
+#submitEdit{
+    background: var(--accent-color);
+    color: white;
+    
+}
+
+#submitEdit:hover {
+    background: var(--accent-color);
+}
+
+#submitEdit:active {
+    transform: scale(0.97);
+}
+
 #createBtn:hover {
-    background: #6a9dff;
+    background: var(--accent-color);
 }
 #createBtn:active {
     transform: scale(0.97);
 }
-
-/* Cancel button – muted */
-#closeBtn {
+#closeBtn, #cancelBtn {
     background: #2c2c2c;
     color: #ddd;
     margin-left: 8px;
@@ -368,13 +355,50 @@ dialog:not(:open) {
 #closeBtn:hover {
     background: #383838;
 }
+#cancelBtn:hover{
+    background: var(--accent-color);
+}
+
+#cancelBtn:active {
+    transform: scale(0.97);
+}
+
 #closeBtn:active {
     transform: scale(0.97);
 }
 
-/* Form layout */
-#newConversationDialog form {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
+/* Friend Picker Scroll Area */
+.scroll-menu {
+    height: 180px;
+    overflow-y: auto;
+    background: #202020;
+    border: 1px solid #333;
+    border-radius: 8px;
+    padding: 8px;
+}
+#friendSelector p {
+    margin-bottom: 6px;
+    font-size: 0.9rem;
+    color: #cfcfcf;
+}
+
+/* Scrollbar Style */
+.scroll-menu::-webkit-scrollbar {
+    width: 8px;
+}
+.scroll-menu::-webkit-scrollbar-thumb {
+    background: #444;
+    border-radius: 4px;
+}
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+@media (max-width: 700px) {
+    .main-grid {
+        grid-template-columns: 1fr;
+    }
+    .sidebar {
+        display: none;
+    }
 }

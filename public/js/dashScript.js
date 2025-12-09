@@ -1,4 +1,4 @@
-const sidebar = document.getElementById("messageholder");
+const conversationlist = document.getElementById("messageholder");
 const friendsSidebar = document.getElementById("friends-list");
 const userID = localStorage.getItem("currentUserID");
 const newConversationButton = document.getElementById("newConversation")
@@ -6,10 +6,16 @@ const userListContainer = document.getElementById("userListContainer");
 const createNewConvoBtn = document.getElementById("createBtn");
 const closeBtn = document.getElementById("closeBtn");
 const profileDisplayBtn = document.getElementById("profile-btn"); 
+const profileSubmit = document.getElementById("submitEdit");
 const profileCancel = document.getElementById("cancelBtn");
+const themePicker = document.getElementById("themeColorPicker");
+const savedColor = localStorage.getItem("themeColor");
 
 
-
+if (savedColor) {
+    applyThemeColor(savedColor);
+    themePicker.value = savedColor; 
+}
 
 async function renderUsers() { 
   const response = await fetch("/api/users");
@@ -56,9 +62,18 @@ profileCancel.addEventListener("click", () => {
   profilebtnDialog.close();
 })
 
+profileSubmit.addEventListener("click", () => {
+    const selectedColor = themePicker.value;
+    localStorage.setItem("themeColor", selectedColor);
+
+    applyThemeColor(selectedColor);
+    profilebtnDialog.close();
+});
 
 
-
+function applyThemeColor(color) {
+    document.documentElement.style.setProperty("--accent-color", color);
+}
 
 
 createNewConvoBtn.addEventListener("click", async  (e) => { 
@@ -146,12 +161,13 @@ async function loadConversationList() {
   const data = await response.json();
   console.log("Conversation list:", data);
 
-  const holder = document.getElementById("messageholder");
-  holder.innerHTML = "";
+  conversationlist.innerHTML = "";
 
   data.forEach(convo => {
-    holder.appendChild(renderConversationItem(convo));
+    conversationlist.appendChild(renderConversationItem(convo));
   });
+  
+  highlightFromQuery();
 }
 
 loadConversationList();
@@ -159,18 +175,14 @@ loadConversationList();
 
 function renderConversationItem(convo) {
   const div = document.createElement("div");
-  div.classList.add("conversation-item");
-  div.dataset.convoId = convo.ConversationID;
-
-  div.innerHTML = `
-    <div class="conversation-title">${convo.ConvoTitle}</div>
-  `;
-
-  div.addEventListener("click", () => {
-      window.location.href = `dashboard.html?conversationID=${convo.ConversationID}`;
-  });
-
-  return div;
+    div.classList.add("conversation-item");
+    div.dataset.convoId = convo.ConversationID;
+  
+    div.innerHTML = `
+      <div class="conversation-title">${convo.ConvoTitle}</div>
+    `;
+  
+    return div;
 }
 
 
@@ -201,12 +213,35 @@ async function populateFriends() {
     const friendElement = document.createElement("div");
     friendElement.classList.add("friend");
     friendElement.textContent = friend.username;
-    sidebar.appendChild(friendElement);
+    friendsSidebar.appendChild(friendElement);
   });
 }
 
 populateFriends();
 
+conversationlist.addEventListener("click", (e) => {
+  const selectedConversation = e.target.closest(".conversation-item");
+  if (!selectedConversation) return;
+
+  conversationlist
+    .querySelectorAll(".conversation-item.active")
+    .forEach(item => item.classList.remove("active"));
+
+  selectedConversation.classList.add("active");
+  const convoId = selectedConversation.dataset.convoId;
+  window.location.href = `dashboard.html?conversationID=${convoId}`;
+});
+
+
+function highlightFromQuery() {
+  const params = new URLSearchParams(window.location.search);
+  const activeId = params.get("conversationID");
+  if (!activeId) return;
+
+  conversationlist.querySelectorAll(".conversation-item").forEach(item => {
+    item.classList.toggle("active", item.dataset.convoId === activeId);
+  });
+}
 
 
 const logoutBtn = document.getElementById("logout-btn");
