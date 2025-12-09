@@ -4,7 +4,9 @@ const userID = localStorage.getItem("currentUserID");
 const newConversationButton = document.getElementById("newConversation")
 const userListContainer = document.getElementById("userListContainer");
 const createNewConvoBtn = document.getElementById("createBtn");
-const profileDisplayBtn = document.getElementById("profile-btn") 
+const closeBtn = document.getElementById("closeBtn");
+const profileDisplayBtn = document.getElementById("profile-btn"); 
+const profileCancel = document.getElementById("cancelBtn");
 
 
 
@@ -42,9 +44,19 @@ newConversationButton.addEventListener("click", () => {
   newConversationDialog.showModal();
 })
 
-// profileDisplayBtn.addEventListener("click", () => {
-//   profileDisplay.showModal();
-// })
+closeBtn.addEventListener("click", () => {
+  newConversationDialog.close();
+})
+
+profileDisplayBtn.addEventListener("click", () => {
+  profilebtnDialog.showModal();
+})
+
+profileCancel.addEventListener("click", () => { 
+  profilebtnDialog.close();
+})
+
+
 
 
 
