@@ -18,6 +18,20 @@ async function getUserConversations(req, res) {
   }
 }
 
+async function updateBio(req, res) {
+  try {
+    const id = req.params.id;
+    const bio = req.body.bio;
+
+    await db.updateUserBio(id, bio);
+
+    res.status(200).json({ message: "Bio updated successfully" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Server Error");
+  }
+}
+
 async function getUsers(req, res) {
   try {
     const users = await db.getUsers();
@@ -81,6 +95,19 @@ async function createConversation(req, res) {
   }
 }
 
+async function getConversationUsers(req, res) {
+  try {
+    const conversationID = req.params.id;
+    const members = await db.getConversationMembers(conversationID);
+    res.status(200).json(members);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Server Error");
+  }
+}
+
+
+
 async function getMessages(req, res) {
   const conversationId = req.params.id;
 
@@ -106,5 +133,7 @@ export default {
   getUserFriends,
   getUsers,
   createConversation,
-  getMessages
+  getMessages,
+  updateBio,
+  getConversationUsers,
 };

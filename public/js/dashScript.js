@@ -10,6 +10,9 @@ const profileSubmit = document.getElementById("submitEdit");
 const profileCancel = document.getElementById("cancelBtn");
 const themePicker = document.getElementById("themeColorPicker");
 const savedColor = localStorage.getItem("themeColor");
+const newBio = document.getElementById("NewBio");
+
+
 
 
 if (savedColor) {
@@ -62,10 +65,15 @@ profileCancel.addEventListener("click", () => {
   profilebtnDialog.close();
 })
 
-profileSubmit.addEventListener("click", () => {
+profileSubmit.addEventListener("click", async() => {
     const selectedColor = themePicker.value;
+    const newBioValue = newBio.value;
     localStorage.setItem("themeColor", selectedColor);
-
+    
+    if (newBioValue) { 
+      updateBio(newBioValue, userID);
+    }
+    
     applyThemeColor(selectedColor);
     profilebtnDialog.close();
 });
@@ -109,6 +117,80 @@ createNewConvoBtn.addEventListener("click", async  (e) => {
   
 })
 
+async function updateBio(bio, currentUserID) {
+  const payload = {
+    bio: bio,
+    id: currentUserID
+  }
+  
+  try { 
+    const response = await fetch(`/api/updateBio/${userID}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    })
+    if (!response.ok) {
+      const error = await response.json();
+      console.error("Failed to update bio:", error);
+      alert("Error updating bio.");
+      return null;
+    }
+    const updatedUser = await response.json();
+    console.log("Updated user:", updatedUser);
+    return updatedUser;
+  } catch (error) {
+    console.error("Error updating bio:", error);
+    alert("Error updating bio.");
+    return null;
+  }
+  
+}
+
+async function populateConversationUsers() {
+  friendsSidebar.innerHTML = "";
+
+  const currentUserID = localStorage.getItem("currentUserID");
+  if (!currentUserID) return;
+
+  const params = new URLSearchParams(window.location.search);
+  const conversationID = params.get("conversationID");
+
+  if (!conversationID) {
+    return;
+  }
+
+  try {
+    const response = await fetch(`/api/conversations/${conversationID}/users`);
+    const rawData = await response.json();
+    const members = Array.isArray(rawData) ? rawData : [rawData];
+
+    const otherMembers = members.filter(u =>
+      String(u.UserID ?? u.userId ?? u.id) !== String(currentUserID)
+    );
+
+    if (otherMembers.length === 0) {
+      const el = document.createElement("div");
+      el.classList.add("no-friends");
+      el.textContent = "No other members";
+      friendsSidebar.appendChild(el);
+      return;
+    }
+
+    otherMembers.forEach(user => {
+      const el = document.createElement("div");
+      el.classList.add("friend");
+      el.textContent = user.Username ?? user.username ?? "Unknown User";
+      friendsSidebar.appendChild(el);
+    });
+
+  } catch (err) {
+    console.error("Error loading conversation members:", err);
+  }
+}
+
+
+
+
 async function createNewConversation(conversationTitle, conversationType, userList, currentUserID) {
   const payload = {
     title: conversationTitle,
@@ -136,6 +218,10 @@ async function createNewConversation(conversationTitle, conversationType, userLi
 
 
     await loadConversationList();
+    
+    if (new URLSearchParams(window.location.search).get("conversationID")) {
+      populateConversationUsers();
+    }
 
   
     if (rawData.conversationId) {
@@ -186,38 +272,51 @@ function renderConversationItem(convo) {
 }
 
 
-async function populateFriends() {
+async function populateConversationUsers() {
   friendsSidebar.innerHTML = "";
 
-  const userID = localStorage.getItem("currentUserID");
+  const currentUserID = localStorage.getItem("currentUserID");
+  if (!currentUserID) return;
 
-  if (!userID) {
-    console.warn("No User ID found. Redirecting to login...");
+  const params = new URLSearchParams(window.location.search);
+  const conversationID = params.get("conversationID");
+
+  
+  if (!conversationID) {
     return;
   }
 
-  const response = await fetch(`/api/friends/${userID}`);
-  const rawData = await response.json();
-  
-  const friends = Array.isArray(rawData) ? rawData : [rawData];
-  
-  if(friends.length === 0) {
-    const noFriendsElement = document.createElement("div");
-    noFriendsElement.classList.add("no-friends");
-    noFriendsElement.textContent = "No friends found";
-    friendsSidebar.appendChild(noFriendsElement);
-    return;
-  }
+  try {
+    const response = await fetch(`/api/conversations/${conversationID}/users`);
+    const rawData = await response.json();
+    const members = Array.isArray(rawData) ? rawData : [rawData];
 
-  friends.forEach((friend) => {
-    const friendElement = document.createElement("div");
-    friendElement.classList.add("friend");
-    friendElement.textContent = friend.username;
-    friendsSidebar.appendChild(friendElement);
-  });
+    const otherMembers = members.filter(u =>
+      String(u.UserID ?? u.userId ?? u.id) !== String(currentUserID)
+    );
+
+    if (otherMembers.length === 0) {
+      const el = document.createElement("div");
+      el.classList.add("no-friends");
+      el.textContent = "No other members";
+      friendsSidebar.appendChild(el);
+      return;
+    }
+
+    otherMembers.forEach(user => {
+      const el = document.createElement("div");
+      el.classList.add("friend");
+      el.textContent = user.Username ?? user.username ?? "Unknown User";
+      friendsSidebar.appendChild(el);
+    });
+
+  } catch (err) {
+    console.error("Error loading conversation members:", err);
+  }
 }
 
-populateFriends();
+
+populateConversationUsers();
 
 conversationlist.addEventListener("click", (e) => {
   const selectedConversation = e.target.closest(".conversation-item");
@@ -264,3 +363,5 @@ logoutBtn.addEventListener("click", (e) => {
   }
   window.location.href = "/";
 });
+
+
