@@ -183,7 +183,7 @@ body {
     border-color: #3b82f6;
 }
 
-.message-title {
+.conversation-item {
     padding: 10px;
     background: #1f1f1f;
     border-radius: 10px;
@@ -194,7 +194,7 @@ body {
     margin-top: 10px;
 }
 
-.message-title:hover {
+.conversation-item:hover {
     background: #262626;
     border-color: #3b82f6;
 }

@@ -82,53 +82,73 @@ createNewConvoBtn.addEventListener("click", async  (e) => {
   
 })
 
-async function createNewConversation(conversationTitle, conversationType, userList, currentUserID) { 
-  
+async function createNewConversation(conversationTitle, conversationType, userList, currentUserID) {
   const payload = {
-    title: conversationTitle, 
-    type: conversationType, 
-    userIds: userList,  
-    createdBy: currentUserID   
+    title: conversationTitle,
+    type: conversationType,
+    userIds: userList,
+    createdBy: currentUserID
   };
-  
-  console.log(JSON.stringify(payload));
-  
-  const response = await fetch(`/api/newConversation`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payload)
-  });
 
-  const rawData = await response.json();
-  console.log("Server response:", rawData);
+  try {
+    const response = await fetch(`/api/newConversation`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      console.error("Failed to create conversation:", error);
+      alert("Error creating conversation.");
+      return null;
+    }
+
+    const rawData = await response.json();
+    console.log("Conversation created:", rawData);
+
+
+    await loadConversationList();
+
   
+    if (rawData.conversationId) {
+      window.location.href = `dashboard.html?conversationID=${rawData.conversationId}`;
+    }
+
+    return rawData;
+  } catch (err) {
+    console.error("Request error:", err);
+    alert("Network error creating conversation.");
+    return null;
+  }
 }
 
-async function populatingMessages() {
-  sidebar.innerHTML = "";
+
+// async function populatingMessages() {
+//   sidebar.innerHTML = "";
   
 
-  if (!userID) {
-    console.warn("No User ID found. Redirecting to login...");
-    return;
-  }
+//   if (!userID) {
+//     console.warn("No User ID found. Redirecting to login...");
+//     return;
+//   }
 
-  const response = await fetch(`/api/conversations/${userID}`);
-  const rawData = await response.json();
-  const message = Array.isArray(rawData) ? rawData : [rawData];
+//   const response = await fetch(`/api/conversations/${userID}`);
+//   const rawData = await response.json();
+//   const message = Array.isArray(rawData) ? rawData : [rawData];
   
-  if (message.length === 0) { 
-    sidebar.innerHTML = "<p>No messages found</p>";
-    return;
-  }
+//   if (message.length === 0) { 
+//     sidebar.innerHTML = "<p>No messages found</p>";
+//     return;
+//   }
 
-  message.forEach((message) => {
-    const convoTitleElement = document.createElement("div");
-    convoTitleElement.classList.add("message-title");
-    convoTitleElement.textContent = message.ConvoTitle;
-    sidebar.appendChild(convoTitleElement);
-  });
-}
+//   message.forEach((message) => {
+//     const convoTitleElement = document.createElement("div");
+//     convoTitleElement.classList.add("conversation-item");
+//     convoTitleElement.textContent = message.ConvoTitle;
+//     sidebar.appendChild(convoTitleElement);
+//   });
+// }
 
 async function loadConversationList() {
   const response = await fetch(`/api/conversations/${userID}`, {
@@ -147,6 +167,8 @@ async function loadConversationList() {
   });
 }
 
+loadConversationList();
+
 
 function renderConversationItem(convo) {
   const div = document.createElement("div");
@@ -158,7 +180,7 @@ function renderConversationItem(convo) {
   `;
 
   div.addEventListener("click", () => {
-      window.location.href = `chat.html?conversationID=${convo.ConversationID}`;
+      window.location.href = `dashboard.html?conversationID=${convo.ConversationID}`;
   });
 
   return div;
@@ -198,7 +220,7 @@ async function populateFriends() {
 
 populateFriends();
 
-populatingMessages();
+//populatingMessages();
 
 
 const logoutBtn = document.getElementById("logout-btn");

@@ -46,13 +46,13 @@ async function createConversation(req, res) {
   try {
     let { title, type, userIds, createdBy } = req.body;
 
-
+     const DEFAULT_TITLE = "New Chat";
 
     if (type === "SINGLE" || (type === "GROUP" && !title)) {
       const names = await db.getUsernames(userIds);
 
       if (names.length > 0) {
-        title = names[0]; // SINGLE = exactly one name
+        title = names[0]; 
       }
     }
 
@@ -61,9 +61,9 @@ async function createConversation(req, res) {
       const userProvidedCustomTitle = title && title !== DEFAULT_TITLE;
 
       if (!userProvidedCustomTitle) {
-        const names = await dataBase.getUsernames(userIds);
+        const names = await db.getUsernames(userIds);
         if (names.length > 0) {
-          title = names.join(", ");  // Group = join names
+          title = names.join(", "); 
         } else {
           title = DEFAULT_TITLE;
         }
