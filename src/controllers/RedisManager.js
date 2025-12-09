@@ -25,6 +25,7 @@ class RedisManager {
 
   async createMessage(msgJSON) {
     await this.client.json.set(msgJSON.messageID, "$", msgJSON);
+    await this.client.expire(msgJSON.messageID, 86400) //86400 is the number of seconds in a day
   }
 
   async getMessage(messageID) {
