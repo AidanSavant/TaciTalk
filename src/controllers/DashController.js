@@ -50,7 +50,7 @@ async function getUserById(req, res) {
 async function getUsers(req, res) {
   try {
     const users = await db.getUsers();
-
+    
     res.status(200).json(users);
   } catch (error) {
     console.error(error);

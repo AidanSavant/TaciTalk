@@ -182,6 +182,13 @@ class DatabaseManager {
     const results = await this.executeQuery(sql, params);
     return results;
   }
+  
+  async getAllMessageContent() {
+    const sql = `SELECT MessageContent FROM Messages`;
+    const params = [];
+    const results = await this.executeQuery(sql, params);
+    return results;
+  }
 
   //Delete a Message
   async deleteMessage(messageID) {

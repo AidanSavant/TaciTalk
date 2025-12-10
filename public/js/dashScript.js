@@ -36,6 +36,7 @@ async function renderUsers() {
   console.log(users);
   
   users.forEach((user) => {
+    
     const userElement = document.createElement("label");
     userElement.className = "user-item";
     
