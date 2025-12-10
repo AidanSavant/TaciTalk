@@ -14,7 +14,14 @@ socket.on("disconnect", () => {
 
 
 const params = new URLSearchParams(window.location.search);
-const conversationID = params.get("conversationID");
+let conversationID = params.get("conversationID");
+
+window.setActiveConversation = (convoId) => {
+  conversationID = String(convoId);
+
+  socket.emit("join_conversation", { conversationID });
+  console.log(`Switched & joined room: conversation_${conversationID}`);
+};
 
 if (!conversationID) {
   console.warn("No conversation ID found in URL");
@@ -50,7 +57,7 @@ function sendMessage() {
 
   socket.emit("send_message", {
     conversationID,
-    messageType: "TEXT",
+    messageType: "Text",
     messageContent: text
   });
 

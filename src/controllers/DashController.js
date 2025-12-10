@@ -58,6 +58,21 @@ async function getUsers(req, res) {
   }
 }
 
+async function getConversationMessages(req, res) {
+  try {
+    const conversationID = Number(req.params.id);
+    const limit = Number(req.query.limit) || 50;
+    const offset = Number(req.query.offset) || 0;
+
+    const messages = await db.getConversationMessages(conversationID, limit, offset);
+
+    res.status(200).json(messages);
+  } catch (err) {
+    console.error("Get Conversation Messages Error:", err);
+    res.status(500).json({ message: "Server Error" });
+  }
+}
+
 
 async function getUserFriends(req, res) { 
   try {
@@ -147,4 +162,5 @@ export default {
   updateBio,
   getConversationUsers,
   getUserById,
+  getConversationMessages,
 };

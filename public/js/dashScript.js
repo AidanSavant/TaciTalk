@@ -158,50 +158,6 @@ async function updateBio(bio, currentUserID) {
   
 }
 
-async function populateConversationUsers() {
-  friendsSidebar.innerHTML = "";
-
-  const currentUserID = localStorage.getItem("currentUserID");
-  if (!currentUserID) return;
-
-  const params = new URLSearchParams(window.location.search);
-  const conversationID = params.get("conversationID");
-
-  if (!conversationID) {
-    return;
-  }
-
-  try {
-    const response = await fetch(`/api/conversations/${conversationID}/users`);
-    const rawData = await response.json();
-    const members = Array.isArray(rawData) ? rawData : [rawData];
-
-    const otherMembers = members.filter(u =>
-      String(u.UserID ?? u.userId ?? u.id) !== String(currentUserID)
-    );
-
-    if (otherMembers.length === 0) {
-      const el = document.createElement("div");
-      el.classList.add("no-friends");
-      el.textContent = "No other members";
-      friendsSidebar.appendChild(el);
-      return;
-    }
-
-    otherMembers.forEach(user => {
-      const el = document.createElement("div");
-      el.classList.add("friend");
-      el.textContent = user.Username ?? user.username ?? "Unknown User";
-      friendsSidebar.appendChild(el);
-    });
-
-  } catch (err) {
-    console.error("Error loading conversation members:", err);
-  }
-}
-
-
-
 
 async function createNewConversation(conversationTitle, conversationType, userList, currentUserID) {
   const payload = {
@@ -331,7 +287,7 @@ async function populateConversationUsers() {
 
 populateConversationUsers();
 
-conversationlist.addEventListener("click", (e) => {
+conversationlist.addEventListener("click", async (e) => {
   const selectedConversation = e.target.closest(".conversation-item");
   if (!selectedConversation) return;
 
@@ -341,13 +297,69 @@ conversationlist.addEventListener("click", (e) => {
 
   selectedConversation.classList.add("active");
   const convoId = selectedConversation.dataset.convoId;
-  getMessagesInsideConversation(convoId);
-  window.location.href = `dashboard.html?conversationID=${convoId}`;
+  await getMessagesInsideConversation(convoId);
+  
+  const url = new URL(window.location);
+  url.searchParams.set("conversationID", convoId);
+  window.history.pushState({}, "", url);
+  
+  populateConversationUsers();
+  
+  if (window.setActiveConversation) {
+      window.setActiveConversation(convoId);
+    }
+  
 });
 
 async function getMessagesInsideConversation(convoId) {
-  
+  console.log("I GOT HIT");
+  const chatArea = document.querySelector(".chat-area");
+  if (!chatArea) return;
+
+  chatArea.innerHTML = "";
+
+  try {
+    const res = await fetch(`/api/conversations/${convoId}/messages?limit=50&offset=0`);
+    if (!res.ok) throw new Error("Failed to fetch messages");
+
+    const messages = await res.json();
+
+    
+    messages.reverse();
+
+    messages.forEach(msg => {
+      
+      const normalized = {
+        messageID: msg.MessageID ?? msg.messageID,
+        conversationID: msg.ConversationID ?? msg.conversationID,
+        userID: msg.UserID ?? msg.userID,
+        username: msg.Username ?? msg.username,
+
+        messageType: msg.MessageType ?? msg.messageType,
+        messageContent: msg.MessageContent ?? msg.messageContent,
+
+        timestamp: msg.timeSent ?? msg.timestamp,
+        isoTimestamp: msg.isoTimestamp
+      };
+
+      // Use your existing UI builder from chat.js
+      if (typeof addMessageToUI === "function") {
+        addMessageToUI(normalized);
+      } else {
+        
+        const div = document.createElement("div");
+        div.className = "msg";
+        div.textContent = normalized.messageContent;
+        chatArea.appendChild(div);
+      }
+    });
+
+    chatArea.scrollTop = chatArea.scrollHeight;
+  } catch (err) {
+    console.error(err);
+  }
 }
+
 
 function highlightFromQuery() {
   const params = new URLSearchParams(window.location.search);

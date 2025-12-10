@@ -17,11 +17,12 @@ class MessageController {
     if (!conversationID || !messageType || !messageContent) {
       return socket.emit("error", { message: "Invalid message payload!" });
     }
-
-    const messageId = `${crypto.randomBytes(16).toString("hex")}`;
-    const timestamp = new Date().toISOString().slice(0, 19).replace("T", " ");
+    const now = new Date();
+    const timestamp = now.toISOString().slice(0, 19).replace("T", " ");
+    const isoTimestamp = now.toISOString();
+    
+    const messageId = `${crypto.randomBytes(16).toString("hex")}`;// not for mySQL, the database autoincrements
     const expiresAt = timestamp + 24 * 3600; // 24 hours from now
-    const isoTimestamp = new Date(timestamp).toISOString();
     const username = await this.db.getUsername(socket.userId);
     
     const message = {

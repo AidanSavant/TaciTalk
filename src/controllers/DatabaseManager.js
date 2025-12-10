@@ -173,13 +173,17 @@ class DatabaseManager {
   //MESSAGES CRUD
 
   //Create a new Message
-  async createMessage(conversationID, userID, messageType) {
-    const sql =
-      "INSERT INTO Messages (timeSent, MessageType, SavedAt, ConversationID, UserID) VALUES (NOW(), ?, NOW(), ?, ?)";
-    const params = [messageType, conversationID, userID];
+  async createMessage(conversationID, userID, messageType, messageContent) {
+    const sql = `
+      INSERT INTO Messages(timeSent, MessageType, MessageContent, SavedAt, ConversationID, UserID)
+      VALUES(NOW(), ?, ?, NOW(), ?, ?)
+    `;
+  
+    const params = [messageType, messageContent, conversationID, userID];
     const results = await this.executeQuery(sql, params);
-    return results.insertId;
+    return results.insertId; 
   }
+
 
   // Read Messages for a Conversation
   async getConversationMessages(conversationID, limit = 50, offset = 0) {
