@@ -186,9 +186,9 @@ class DatabaseManager {
 
 
   // Read Messages for a Conversation
-  async getConversationMessages(conversationID, limit = 50, offset = 0) {
-    const sql = `SELECT * FROM Messages WHERE ConversationID = ? ORDER BY timeSent DESC LIMIT ? OFFSET ?`;
-    const params = [conversationID, limit, offset];
+  async getConversationMessages(conversationID) {
+    const sql = `SELECT * FROM Messages WHERE ConversationID = ? ORDER BY timeSent `;
+    const params = [conversationID];
     const results = await this.executeQuery(sql, params);
     return results;
   }

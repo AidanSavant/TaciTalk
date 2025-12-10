@@ -210,6 +210,9 @@ body {
     border: 1px solid #262626;
     color: #e5e5e5;
     font-size: 15px;
+    .msgSaved{
+        background: color-mix(in srgb, var(--accent-color) 50%, yellow percentage);
+    }
 }
 
 .msg.right {
@@ -417,6 +420,8 @@ dialog:not(:open) {
     font-size: 0.9rem;
     color: #cfcfcf;
 }
+
+
 
 /* Scrollbar Style */
 .scroll-menu::-webkit-scrollbar {

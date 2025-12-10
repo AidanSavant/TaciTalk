@@ -11,7 +11,7 @@ router.post("/newConversation", DashController.createConversation);
 router.put("/updateBio/:id", DashController.updateBio);
 router.get("/conversations/:id/users", DashController.getConversationUsers);
 router.get("/users/:id", DashController.getUserById);
-router.get("/api/conversations/:id/messages", DashController.getConversationMessages)
+router.get("/conversation/:id/messages", DashController.getConversationMessages)
 
 
 export default router;

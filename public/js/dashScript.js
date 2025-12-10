@@ -5,7 +5,7 @@ const newConversationButton = document.getElementById("newConversation")
 const userListContainer = document.getElementById("userListContainer");
 const createNewConvoBtn = document.getElementById("createBtn");
 const closeBtn = document.getElementById("closeBtn");
-const profileDisplayBtn = document.getElementById("profile-btn");
+const profileDisplayBtn = document.getElementById("profile-btn"); 
 const profileSubmit = document.getElementById("submitEdit");
 const profileCancel = document.getElementById("cancelBtn");
 const themePicker = document.getElementById("themeColorPicker");
@@ -16,26 +16,6 @@ const currentuserdisplay = document.getElementById("currentuserdisplay");
 socket.on("added_to_conversation", () => {
     loadConversationList();
 });
-
-function updateMessageHandlers(id){
-  const msgHandler = document.getElementById(id)
-  msgHandler.addEventListener('click',(msg)=>{
-    console.log("msg id: "+msgHandler.id)
-    if (msgHandler.innerHTML.slice(0, 22) != "<div class=\"msgSaved\">") {
-      console.log(msgHandler.innerHTML.slice(0,20))
-      ioBridge.msgSave(msgHandler.id)
-      msgHandler.innerHTML = "<div class=\"msgSaved\">" + msgHandler.innerText + "</div>"
-    } else{
-      ioBridge.msgUnsave(msgHandler.id)
-      msgHandler.innerHTML = msgHandler.innerText
-    }
-  })
-}
-class msgClick{ //static handler for updating messages retrieved from chat.js
-  static async updateME(id){
-    updateMessageHandlers(id);
-  }
-}
 
 async function showCurrentUsername() {
   if (!userID) return;
@@ -49,20 +29,20 @@ showCurrentUsername();
 
 if (savedColor) {
     applyThemeColor(savedColor);
-    themePicker.value = savedColor;
+    themePicker.value = savedColor; 
 }
 
-async function renderUsers() {
+async function renderUsers() { 
   const response = await fetch("/api/users");
   const rawData = await response.json();
   const users = Array.isArray(rawData) ? rawData : [rawData];
-
+  
   console.log(users);
-
+  
   users.forEach((user) => {
     const userElement = document.createElement("label");
     userElement.className = "user-item";
-
+    
 
     const checkbox = document.createElement('input')
     checkbox.type = 'checkbox';
@@ -74,8 +54,8 @@ async function renderUsers() {
     if (userListContainer) {
         userListContainer.appendChild(userElement);
     }
-
-
+    
+    
   });
 }
 
@@ -93,7 +73,7 @@ profileDisplayBtn.addEventListener("click", () => {
   profilebtnDialog.showModal();
 })
 
-profileCancel.addEventListener("click", () => {
+profileCancel.addEventListener("click", () => { 
   profilebtnDialog.close();
 })
 
@@ -101,11 +81,11 @@ profileSubmit.addEventListener("click", async() => {
     const selectedColor = themePicker.value;
     const newBioValue = newBio.value;
     localStorage.setItem("themeColor", selectedColor);
-
-    if (newBioValue) {
+    
+    if (newBioValue) { 
       updateBio(newBioValue, userID);
     }
-
+    
     applyThemeColor(selectedColor);
     profilebtnDialog.close();
 });
@@ -116,37 +96,37 @@ function applyThemeColor(color) {
 }
 
 
-createNewConvoBtn.addEventListener("click", async  (e) => {
-  e.preventDefault();
+createNewConvoBtn.addEventListener("click", async  (e) => { 
+  e.preventDefault(); 
 
   const titleInput = document.getElementById("groupName");
-  const titleValue = titleInput.value.trim() || "New Chat";
+  const titleValue = titleInput.value.trim() || "New Chat"; 
 
 
   const checkedBoxes = document.querySelectorAll("#userListContainer input[type='checkbox']:checked");
   const selectedUserIds = Array.from(checkedBoxes).map(checkbox => checkbox.value);
 
   let typeValue;
-
+  
   if (selectedUserIds.length === 0) {
     alert("Please select at least one friend.");
     return;
   }
-
+  
   if (selectedUserIds.length === 1) {
     typeValue = "SINGLE";
   } else if (selectedUserIds.length > 1) {
     typeValue = "GROUP";
   }
 
-
+  
   await createNewConversation(titleValue, typeValue, selectedUserIds,userID);
-
+  
   await loadConversationList();
   document.getElementById("newConversationDialog").close();
-  titleInput.value = "";
+  titleInput.value = ""; 
   checkedBoxes.forEach(box => box.checked = false);
-
+  
 })
 
 async function updateBio(bio, currentUserID) {
@@ -154,8 +134,8 @@ async function updateBio(bio, currentUserID) {
     bio: bio,
     id: currentUserID
   }
-
-  try {
+  
+  try { 
     const response = await fetch(`/api/updateBio/${userID}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
@@ -175,7 +155,7 @@ async function updateBio(bio, currentUserID) {
     alert("Error updating bio.");
     return null;
   }
-
+  
 }
 
 
@@ -202,17 +182,17 @@ async function createNewConversation(conversationTitle, conversationType, userLi
     }
 
     const rawData = await response.json();
-
+    
     socket.emit("conversation_created", {
       members: [...userList, currentUserID]
     });
 
     await loadConversationList();
-
+    
     if (new URLSearchParams(window.location.search).get("conversationID")) {
       populateConversationUsers();
     }
-
+  
     if (rawData.conversationId) {
       window.location.href = `dashboard.html?conversationID=${rawData.conversationId}`;
     }
@@ -232,7 +212,7 @@ async function loadConversationList() {
     method: "GET",
     headers: { "Content-Type": "application/json" }
   });
-
+  
   const data = await response.json();
   console.log("Conversation list:", data);
 
@@ -241,7 +221,7 @@ async function loadConversationList() {
   data.forEach(convo => {
     conversationlist.appendChild(renderConversationItem(convo));
   });
-
+  
   highlightFromQuery();
 }
 
@@ -252,11 +232,11 @@ function renderConversationItem(convo) {
   const div = document.createElement("div");
     div.classList.add("conversation-item");
     div.dataset.convoId = convo.ConversationID;
-
+  
     div.innerHTML = `
       <div class="conversation-title">${convo.ConvoTitle}</div>
     `;
-
+  
     return div;
 }
 
@@ -270,7 +250,7 @@ async function populateConversationUsers() {
   const params = new URLSearchParams(window.location.search);
   const conversationID = params.get("conversationID");
 
-
+  
   if (!conversationID) {
     return;
   }
@@ -318,37 +298,39 @@ conversationlist.addEventListener("click", async (e) => {
   selectedConversation.classList.add("active");
   const convoId = selectedConversation.dataset.convoId;
   await getMessagesInsideConversation(convoId);
-
+  
   const url = new URL(window.location);
   url.searchParams.set("conversationID", convoId);
   window.history.pushState({}, "", url);
-
+  
   populateConversationUsers();
-
+  
   if (window.setActiveConversation) {
       window.setActiveConversation(convoId);
     }
-
+  
 });
 
 async function getMessagesInsideConversation(convoId) {
   console.log("I GOT HIT");
   const chatArea = document.querySelector(".chat-area");
   if (!chatArea) return;
-
+  console.log("I GOT HIT 2");
   chatArea.innerHTML = "";
 
   try {
-    const res = await fetch(`/api/conversations/${convoId}/messages?limit=50&offset=0`);
+    console.log("I GOT HIT 3")
+    const res = await fetch(`/api/conversation/${convoId}/messages`);
+    console.log("I GOT HIT 3");
     if (!res.ok) throw new Error("Failed to fetch messages");
 
     const messages = await res.json();
-
-
+    console.log("I GOT HIT 3");
+    
     messages.reverse();
 
     messages.forEach(msg => {
-
+      
       const normalized = {
         messageID: msg.MessageID ?? msg.messageID,
         conversationID: msg.ConversationID ?? msg.conversationID,
@@ -361,18 +343,21 @@ async function getMessagesInsideConversation(convoId) {
         timestamp: msg.timeSent ?? msg.timestamp,
         isoTimestamp: msg.isoTimestamp
       };
+      
+      console.log("I GOT HIT 4");
 
       // Use your existing UI builder from chat.js
       if (typeof addMessageToUI === "function") {
         addMessageToUI(normalized);
       } else {
-
+        
         const div = document.createElement("div");
         div.className = "msg";
         div.textContent = normalized.messageContent;
         chatArea.appendChild(div);
       }
     });
+    console.log("I GOT HIT 5");
 
     chatArea.scrollTop = chatArea.scrollHeight;
   } catch (err) {

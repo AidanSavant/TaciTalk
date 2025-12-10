@@ -71,46 +71,54 @@ socket.on("new_message", (msg) => {
 
 
 function formatMessageTime(message) {
-  // ISO is apparently a safer, easier way to format dates
+  // Prefer isoTimestamp if present
   if (message.isoTimestamp) {
     const d = new Date(message.isoTimestamp);
     if (!isNaN(d)) {
       return new Intl.DateTimeFormat(undefined, {
+        month: "short",
+        day: "numeric",
         hour: "numeric",
         minute: "2-digit",
       }).format(d);
     }
   }
 
-  // Fallback  old format (UTC)
   if (message.timestamp) {
-    const guess = new Date(message.timestamp.replace(" ", "T") + "Z");
-    if (!isNaN(guess)) {
+    
+    const d1 = new Date(message.timestamp);
+    if (!isNaN(d1)) {
       return new Intl.DateTimeFormat(undefined, {
+        month: "short",
+        day: "numeric",
         hour: "numeric",
         minute: "2-digit",
-      }).format(guess);
+      }).format(d1);
     }
 
+    
+    const d2 = new Date(message.timestamp.replace(" ", "T") + "Z");
+    if (!isNaN(d2)) {
+      return new Intl.DateTimeFormat(undefined, {
+        month: "short",
+        day: "numeric",
+        hour: "numeric",
+        minute: "2-digit",
+      }).format(d2);
+    }
+
+    // Final fallback
     return message.timestamp;
   }
 
   return "";
 }
 
-class ioBridge { //static handler for accessing io from dashScript
-  static msgUnsave(msgID){
-    socket.emit("unsave_message",msgID)
-  }
-  static msgSave(msgID){
-    socket.emit("save_message", msgID)
-  }
-}
 
 function addMessageToUI(message) {
   const bubble = document.createElement("div");
 
-
+  
   const currentUserId = Number(localStorage.getItem("currentUserID"));
   const isMine = Number(message.userID) === currentUserId;
 
@@ -130,10 +138,9 @@ function addMessageToUI(message) {
   meta.appendChild(nameSpan);
   meta.appendChild(timeSpan);
 
-
+  
   const text = document.createElement("div");
   text.className = "msg-text";
-  text.id = message.messageID //
   text.textContent = message.messageContent;
 
   bubble.appendChild(meta);
@@ -141,7 +148,6 @@ function addMessageToUI(message) {
 
   chatArea.appendChild(bubble);
   chatArea.scrollTop = chatArea.scrollHeight;
-  msgClick.updateME(message.messageID); //
 }
 
 
@@ -198,3 +204,5 @@ if (searchInput) {
     }
   });
 }
+
+
