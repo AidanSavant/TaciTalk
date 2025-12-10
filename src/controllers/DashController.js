@@ -78,7 +78,7 @@ async function createConversation(req, res) {
    title = title?.trim() || "";
    
   
-        if (!title) {
+        if (!title || title === "New Chat") {
           const names = await db.getUsernames(userIds);
     
           if (type === "SINGLE") {

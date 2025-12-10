@@ -97,13 +97,16 @@ createNewConvoBtn.addEventListener("click", async  (e) => {
   e.preventDefault(); 
 
   const titleInput = document.getElementById("groupName");
-  const titleValue = titleInput.value.trim() || "New Chat"; 
+  let titleValue = titleInput.value.trim() || "New Chat"; 
+  
+  console.log(titleValue);
+  
+  
 
 
   const checkedBoxes = document.querySelectorAll("#userListContainer input[type='checkbox']:checked");
   const selectedUserIds = Array.from(checkedBoxes).map(checkbox => checkbox.value);
-
-  let typeValue;
+  
   
   if (selectedUserIds.length === 0) {
     alert("Please select at least one friend.");
@@ -115,6 +118,8 @@ createNewConvoBtn.addEventListener("click", async  (e) => {
   } else if (selectedUserIds.length > 1) {
     typeValue = "GROUP";
   }
+  
+  
   
   
   await createNewConversation(titleValue, typeValue, selectedUserIds,userID);
