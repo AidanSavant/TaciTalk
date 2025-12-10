@@ -24,6 +24,10 @@ class WSRouter {
         socket.on("conversation_created", (payload) => {
             this.convoController.conversationCreated(socket, payload);
         });
+
+        socket.on("save_message", (payload) => {
+          this.messageController.saveMessage(socket, payload);
+        });
     }
 }
 
