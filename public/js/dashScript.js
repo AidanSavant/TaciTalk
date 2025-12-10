@@ -5,7 +5,7 @@ const newConversationButton = document.getElementById("newConversation")
 const userListContainer = document.getElementById("userListContainer");
 const createNewConvoBtn = document.getElementById("createBtn");
 const closeBtn = document.getElementById("closeBtn");
-const profileDisplayBtn = document.getElementById("profile-btn"); 
+const profileDisplayBtn = document.getElementById("profile-btn");
 const profileSubmit = document.getElementById("submitEdit");
 const profileCancel = document.getElementById("cancelBtn");
 const themePicker = document.getElementById("themeColorPicker");
@@ -25,21 +25,21 @@ showCurrentUsername();
 
 if (savedColor) {
     applyThemeColor(savedColor);
-    themePicker.value = savedColor; 
+    themePicker.value = savedColor;
 }
 
-async function renderUsers() { 
+async function renderUsers() {
   const response = await fetch("/api/users");
   const rawData = await response.json();
   const users = Array.isArray(rawData) ? rawData : [rawData];
-  
+
   console.log(users);
-  
+
   users.forEach((user) => {
-    
+    if (user.UserID.toString() === userID) return; //skips adding current user
     const userElement = document.createElement("label");
     userElement.className = "user-item";
-    
+
 
     const checkbox = document.createElement('input')
     checkbox.type = 'checkbox';
@@ -51,8 +51,8 @@ async function renderUsers() {
     if (userListContainer) {
         userListContainer.appendChild(userElement);
     }
-    
-    
+
+
   });
 }
 
@@ -70,7 +70,7 @@ profileDisplayBtn.addEventListener("click", () => {
   profilebtnDialog.showModal();
 })
 
-profileCancel.addEventListener("click", () => { 
+profileCancel.addEventListener("click", () => {
   profilebtnDialog.close();
 })
 
@@ -78,11 +78,11 @@ profileSubmit.addEventListener("click", async() => {
     const selectedColor = themePicker.value;
     const newBioValue = newBio.value;
     localStorage.setItem("themeColor", selectedColor);
-    
-    if (newBioValue) { 
+
+    if (newBioValue) {
       updateBio(newBioValue, userID);
     }
-    
+
     applyThemeColor(selectedColor);
     profilebtnDialog.close();
 });
@@ -93,42 +93,42 @@ function applyThemeColor(color) {
 }
 
 
-createNewConvoBtn.addEventListener("click", async  (e) => { 
-  e.preventDefault(); 
+createNewConvoBtn.addEventListener("click", async  (e) => {
+  e.preventDefault();
 
   const titleInput = document.getElementById("groupName");
-  let titleValue = titleInput.value.trim() || "New Chat"; 
-  
+  let titleValue = titleInput.value.trim() || "New Chat";
+
   console.log(titleValue);
-  
-  
+
+
 
 
   const checkedBoxes = document.querySelectorAll("#userListContainer input[type='checkbox']:checked");
   const selectedUserIds = Array.from(checkedBoxes).map(checkbox => checkbox.value);
-  
-  
+
+
   if (selectedUserIds.length === 0) {
     alert("Please select at least one friend.");
     return;
   }
-  
+
   if (selectedUserIds.length === 1) {
     typeValue = "SINGLE";
   } else if (selectedUserIds.length > 1) {
     typeValue = "GROUP";
   }
-  
-  
-  
-  
+
+
+
+
   await createNewConversation(titleValue, typeValue, selectedUserIds,userID);
-  
+
   await loadConversationList();
   document.getElementById("newConversationDialog").close();
-  titleInput.value = ""; 
+  titleInput.value = "";
   checkedBoxes.forEach(box => box.checked = false);
-  
+
 })
 
 async function updateBio(bio, currentUserID) {
@@ -136,8 +136,8 @@ async function updateBio(bio, currentUserID) {
     bio: bio,
     id: currentUserID
   }
-  
-  try { 
+
+  try {
     const response = await fetch(`/api/updateBio/${userID}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
@@ -157,7 +157,7 @@ async function updateBio(bio, currentUserID) {
     alert("Error updating bio.");
     return null;
   }
-  
+
 }
 
 async function populateConversationUsers() {
@@ -232,12 +232,12 @@ async function createNewConversation(conversationTitle, conversationType, userLi
 
 
     await loadConversationList();
-    
+
     if (new URLSearchParams(window.location.search).get("conversationID")) {
       populateConversationUsers();
     }
 
-  
+
     if (rawData.conversationId) {
       window.location.href = `dashboard.html?conversationID=${rawData.conversationId}`;
     }
@@ -257,7 +257,7 @@ async function loadConversationList() {
     method: "GET",
     headers: { "Content-Type": "application/json" }
   });
-  
+
   const data = await response.json();
   console.log("Conversation list:", data);
 
@@ -266,7 +266,7 @@ async function loadConversationList() {
   data.forEach(convo => {
     conversationlist.appendChild(renderConversationItem(convo));
   });
-  
+
   highlightFromQuery();
 }
 
@@ -277,11 +277,11 @@ function renderConversationItem(convo) {
   const div = document.createElement("div");
     div.classList.add("conversation-item");
     div.dataset.convoId = convo.ConversationID;
-  
+
     div.innerHTML = `
       <div class="conversation-title">${convo.ConvoTitle}</div>
     `;
-  
+
     return div;
 }
 
@@ -295,7 +295,7 @@ async function populateConversationUsers() {
   const params = new URLSearchParams(window.location.search);
   const conversationID = params.get("conversationID");
 
-  
+
   if (!conversationID) {
     return;
   }
@@ -377,5 +377,3 @@ logoutBtn.addEventListener("click", (e) => {
   }
   window.location.href = "/";
 });
-
-
