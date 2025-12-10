@@ -64,7 +64,7 @@ async function getConversationMessages(req, res) {
     const limit = Number(req.query.limit) || 50;
     const offset = Number(req.query.offset) || 0;
 
-    const messages = await db.getConversationMessages(conversationID, limit, offset);
+    const messages = await db.getConversationMessages(conversationID);
 
     res.status(200).json(messages);
   } catch (err) {

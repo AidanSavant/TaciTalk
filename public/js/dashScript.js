@@ -315,15 +315,17 @@ async function getMessagesInsideConversation(convoId) {
   console.log("I GOT HIT");
   const chatArea = document.querySelector(".chat-area");
   if (!chatArea) return;
-
+  console.log("I GOT HIT 2");
   chatArea.innerHTML = "";
 
   try {
-    const res = await fetch(`/api/conversations/${convoId}/messages?limit=50&offset=0`);
+    console.log("I GOT HIT 3")
+    const res = await fetch(`/api/conversation/${convoId}/messages`);
+    console.log("I GOT HIT 3");
     if (!res.ok) throw new Error("Failed to fetch messages");
 
     const messages = await res.json();
-
+    console.log("I GOT HIT 3");
     
     messages.reverse();
 
@@ -341,6 +343,8 @@ async function getMessagesInsideConversation(convoId) {
         timestamp: msg.timeSent ?? msg.timestamp,
         isoTimestamp: msg.isoTimestamp
       };
+      
+      console.log("I GOT HIT 4");
 
       // Use your existing UI builder from chat.js
       if (typeof addMessageToUI === "function") {
@@ -353,6 +357,7 @@ async function getMessagesInsideConversation(convoId) {
         chatArea.appendChild(div);
       }
     });
+    console.log("I GOT HIT 5");
 
     chatArea.scrollTop = chatArea.scrollHeight;
   } catch (err) {
