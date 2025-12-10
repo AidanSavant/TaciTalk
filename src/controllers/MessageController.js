@@ -21,15 +21,19 @@ class MessageController {
     const messageId = `${crypto.randomBytes(16).toString("hex")}`;
     const timestamp = new Date().toISOString().slice(0, 19).replace("T", " ");
     const expiresAt = timestamp + 24 * 3600; // 24 hours from now
-
+    const isoTimestamp = new Date(timestamp).toISOString();
+    const username = await this.db.getUsername(socket.userId);
+    
     const message = {
       messageID: messageId,
       timestamp: timestamp,
+      isoTimestamp: isoTimestamp,
       messageType: messageType,
       messageContent: messageContent,
       conversationID: conversationID,
       userID: socket.userId,
       expiresAt: expiresAt,
+      username: username
     };
 
     /*

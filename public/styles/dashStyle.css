@@ -214,10 +214,43 @@ body {
 
 .msg.right {
     margin-left: auto;
-    background: #15376e;
-    border: 1px solid var(--accent-color);
+    background: var(--accent-color);
+    border: 1px solid black;
     color: #ffffff;
 }
+
+/* --- Message meta (username + time) --- */
+.msg {
+    display: flex;
+    flex-direction: column;
+    gap: 6px; /* keeps meta + text nicely spaced */
+}
+
+.msg-meta {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    opacity: 0.75;
+    letter-spacing: 0.2px;
+}
+
+.msg.right .msg-meta {
+    opacity: 0.9;
+}
+
+.msg-username {
+    font-weight: 600;
+}
+
+.msg-time {
+    font-variant-numeric: tabular-nums;
+}
+
+.msg-text {
+    font-size: 15px;
+    line-height: 1.35;
+}
+
 
 /* Bottom Message Bar */
 .bottom-chat-area {

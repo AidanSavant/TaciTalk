@@ -63,15 +63,66 @@ socket.on("new_message", (msg) => {
 });
 
 
+function formatMessageTime(message) {
+  // ISO is apparently a safer, easier way to format dates
+  if (message.isoTimestamp) {
+    const d = new Date(message.isoTimestamp);
+    if (!isNaN(d)) {
+      return new Intl.DateTimeFormat(undefined, {
+        hour: "numeric",
+        minute: "2-digit",
+      }).format(d);
+    }
+  }
+
+  // Fallback  old format (UTC)
+  if (message.timestamp) {
+    const guess = new Date(message.timestamp.replace(" ", "T") + "Z");
+    if (!isNaN(guess)) {
+      return new Intl.DateTimeFormat(undefined, {
+        hour: "numeric",
+        minute: "2-digit",
+      }).format(guess);
+    }
+
+    return message.timestamp;
+  }
+
+  return "";
+}
+
 function addMessageToUI(message) {
-  const div = document.createElement("div");
+  const bubble = document.createElement("div");
 
-  const isMine = Number(message.userID) === Number(localStorage.getItem("currentUserID"));
+  
+  const currentUserId = Number(localStorage.getItem("currentUserID"));
+  const isMine = Number(message.userID) === currentUserId;
 
-  div.className = isMine ? "msg right" : "msg";
-  div.textContent = message.messageContent;
+  bubble.className = isMine ? "msg right" : "msg";
 
-  chatArea.appendChild(div);
+  const meta = document.createElement("div");
+  meta.className = "msg-meta";
+
+  const nameSpan = document.createElement("span");
+  nameSpan.className = "msg-username";
+  nameSpan.textContent = isMine ? "You" : (message.username || "Unknown");
+
+  const timeSpan = document.createElement("span");
+  timeSpan.className = "msg-time";
+  timeSpan.textContent = formatMessageTime(message);
+
+  meta.appendChild(nameSpan);
+  meta.appendChild(timeSpan);
+
+  
+  const text = document.createElement("div");
+  text.className = "msg-text";
+  text.textContent = message.messageContent;
+
+  bubble.appendChild(meta);
+  bubble.appendChild(text);
+
+  chatArea.appendChild(bubble);
   chatArea.scrollTop = chatArea.scrollHeight;
 }
 
