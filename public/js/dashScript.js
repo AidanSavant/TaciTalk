@@ -362,6 +362,8 @@ function highlightFromQuery() {
 }
 
 
+
+
 const logoutBtn = document.getElementById("logout-btn");
 
 logoutBtn.addEventListener("click", (e) => {
