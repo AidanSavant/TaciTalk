@@ -341,9 +341,13 @@ conversationlist.addEventListener("click", (e) => {
 
   selectedConversation.classList.add("active");
   const convoId = selectedConversation.dataset.convoId;
+  getMessagesInsideConversation(convoId);
   window.location.href = `dashboard.html?conversationID=${convoId}`;
 });
 
+async function getMessagesInsideConversation(convoId) {
+  
+}
 
 function highlightFromQuery() {
   const params = new URLSearchParams(window.location.search);

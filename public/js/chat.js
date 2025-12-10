@@ -126,3 +126,59 @@ function addMessageToUI(message) {
   chatArea.scrollTop = chatArea.scrollHeight;
 }
 
+
+const searchInput = document.querySelector(".search-box input");
+
+
+function normalize(str) {
+  return (str || "").toLowerCase().trim();
+}
+
+function getMessageSearchText(msgEl) {
+  const text = msgEl.querySelector(".msg-text")?.textContent || msgEl.textContent || "";
+  const user = msgEl.querySelector(".msg-username")?.textContent || "";
+  return `${text} ${user}`;
+}
+
+function searchMessages(query) {
+  if (!chatArea) return;
+
+  const q = normalize(query);
+  const messages = chatArea.querySelectorAll(".msg");
+
+  let firstMatch = null;
+
+  messages.forEach((msg) => {
+    msg.classList.remove("search-match", "search-hide");
+
+    if (!q) return;
+
+    const hay = normalize(getMessageSearchText(msg));
+
+    if (hay.includes(q)) {
+      msg.classList.add("search-match");
+      if (!firstMatch) firstMatch = msg;
+    } else {
+      msg.classList.add("search-hide");
+    }
+  });
+
+  if (firstMatch) {
+    firstMatch.scrollIntoView({ behavior: "smooth", block: "center" });
+  }
+}
+
+if (searchInput) {
+  searchInput.addEventListener("input", (e) => {
+    searchMessages(e.target.value);
+  });
+
+  searchInput.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") {
+      searchInput.value = "";
+      searchMessages("");
+    }
+  });
+}
+
+
