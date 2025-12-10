@@ -10,6 +10,7 @@ router.get("/conversations/:id/messages", DashController.getMessages);
 router.post("/newConversation", DashController.createConversation);
 router.put("/updateBio/:id", DashController.updateBio);
 router.get("/conversations/:id/users", DashController.getConversationUsers);
+router.get("/users/:id", DashController.getUserById);
 
 
 export default router;

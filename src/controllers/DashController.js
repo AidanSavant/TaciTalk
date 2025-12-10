@@ -32,6 +32,21 @@ async function updateBio(req, res) {
   }
 }
 
+async function getUserById(req, res) {
+  try {
+    const id = req.params.id;
+    const user = await db.getUsername(id);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.status(200).json(user);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Server Error");
+  }
+}
+
 async function getUsers(req, res) {
   try {
     const users = await db.getUsers();
@@ -136,4 +151,5 @@ export default {
   getMessages,
   updateBio,
   getConversationUsers,
+  getUserById,
 };

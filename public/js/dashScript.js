@@ -11,9 +11,17 @@ const profileCancel = document.getElementById("cancelBtn");
 const themePicker = document.getElementById("themeColorPicker");
 const savedColor = localStorage.getItem("themeColor");
 const newBio = document.getElementById("NewBio");
+const currentuserdisplay = document.getElementById("currentuserdisplay");
 
+async function showCurrentUsername() {
+  if (!userID) return;
+  const response = await fetch(`/api/users/${userID}`);
+  if (!response.ok) return;
+  const username = await response.json();
+  currentuserdisplay.textContent = username
+}
 
-
+showCurrentUsername();
 
 if (savedColor) {
     applyThemeColor(savedColor);
