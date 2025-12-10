@@ -130,7 +130,13 @@ class DatabaseManager {
 
   //Read all Conversations for a User
   async getUserConversations(userID) {
-    const sql = "SELECT * FROM Conversations WHERE CreatedBy = ?";
+    const sql = `
+      SELECT DISTINCT c.* 
+      FROM Conversations c
+      JOIN ConversationMembers cm ON c.ConversationID = cm.ConversationID
+      WHERE cm.UserID = ?
+      ORDER BY c.LastUpdatedAt DESC
+    `;
     const params = [userID];
     let results = await this.executeQuery(sql, params);
     if (results.length <= 0) {

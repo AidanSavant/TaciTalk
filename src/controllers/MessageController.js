@@ -1,13 +1,3 @@
-/*
-MessageID
-timeSent
-MessageType
-MessageContent
-SavedAt
-ConversationID
-UserID
-*/
-
 import crypto from "crypto";
 
 class MessageController {
@@ -43,29 +33,15 @@ class MessageController {
     };
 
     /*
-        await this.redis.setExpiringMessage(
-            `message_${messageId}`,
-            24 * 3600,
-            JSON.stringify(message)
-        );
-        */
+      await this.redis.setExpiringMessage(
+        `message_${messageId}`,
+        24 * 3600,
+        JSON.stringify(message)
+      );
+    */
 
     this.io.to(`conversation_${conversationID}`).emit("new_message", message);
     return socket.emit("message_sent", { messageID: messageId });
-  }
-
-  async joinConversation(socket, payload) {
-    if (!socket.userId) {
-      return socket.emit("error", { message: "Unauthorized User!" });
-    }
-
-    const { conversationID } = payload;
-
-    if (!conversationID) {
-      return socket.emit("error", { message: "Invalid conversation ID!" });
-    }
-
-    socket.join(`conversation_${conversationID}`);
   }
 }
 

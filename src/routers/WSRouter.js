@@ -1,7 +1,9 @@
+import ConvoController from "../controllers/ConvoController.js";
 import MessageController from "../controllers/MessageController.js";
 
 class WSRouter {
     constructor(io, db, redis) {
+        this.convoController = new ConvoController(io, db, redis);
         this.messageController = new MessageController(io, db, redis);
     }
 
@@ -11,15 +13,12 @@ class WSRouter {
         })
 
         socket.on("join_conversation", (payload) => {
-            this.messageController.joinConversation(socket, payload);
+            this.convoController.joinConversation(socket, payload);
         });
 
-        /*
-        // This would be if the user wanted to leave, this would remove their socketId from the conversation room
-        socket.on("leave_conversation", (payload) => {
-            this.messageController.leaveConversation(socket, payload);
+        socket.on("conversation_created", (payload) => {
+            this.convoController.conversationCreated(socket, payload);
         });
-        */
     }
 }
 
