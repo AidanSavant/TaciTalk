@@ -13,10 +13,7 @@ const savedColor = localStorage.getItem("themeColor");
 const newBio = document.getElementById("NewBio");
 const currentuserdisplay = document.getElementById("currentuserdisplay");
 
-const socket = io();
-window.socket = socket;
-
-socket.on("conversation_added", () => {
+socket.on("added_to_conversation", () => {
     loadConversationList();
 });
 
@@ -97,6 +94,7 @@ profileSubmit.addEventListener("click", async() => {
 function applyThemeColor(color) {
     document.documentElement.style.setProperty("--accent-color", color);
 }
+
 
 createNewConvoBtn.addEventListener("click", async  (e) => { 
   e.preventDefault(); 
@@ -228,20 +226,16 @@ async function createNewConversation(conversationTitle, conversationType, userLi
     }
 
     const rawData = await response.json();
-    console.log("Conversation created:", rawData);
-
-    if (socket) {
-      socket.emit("conversation_created", {
-        userIds: [...userList, currentUserID]
-      });
-    }
+    
+    socket.emit("conversation_created", {
+      members: [...userList, currentUserID]
+    });
 
     await loadConversationList();
     
     if (new URLSearchParams(window.location.search).get("conversationID")) {
       populateConversationUsers();
     }
-
   
     if (rawData.conversationId) {
       window.location.href = `dashboard.html?conversationID=${rawData.conversationId}`;
@@ -372,8 +366,8 @@ logoutBtn.addEventListener("click", (e) => {
   document.cookie = "token=; path=/; max-age=0";
 
   try {
-    if(window.socket && typeof window.socket.disconnect === "function") {
-      window.socket.disconnect();
+    if(socket && typeof socket.disconnect === "function") {
+      socket.disconnect();
     }
   }
 

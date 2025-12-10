@@ -75,27 +75,23 @@ async function createConversation(req, res) {
   try {
     let { title, type, userIds, createdBy } = req.body;
     
-   title = title?.trim() || "";
+    title = title?.trim() || "";
    
   
-        if (!title || title === "New Chat") {
-          const names = await db.getUsernames(userIds);
-    
-          if (type === "SINGLE") {
-            title = names[0];
-          } else if (type === "GROUP") {
-            title = names.join(", ");
-          }
-        }
-    
-    console.log("FINAL TITLE:", title);
+    if (!title || title === "New Chat") {
+      const names = await db.getUsernames(userIds);
+
+      if (type === "SINGLE") {
+        title = names[0];
+      } else if (type === "GROUP") {
+        title = names.join(", ");
+      }
+    }
 
     const conversationId = await db.createConversation(title, type, createdBy);
 
-
-    const allMembers = [...userIds, createdBy]; 
+    const allMembers = [...new Set([...userIds, createdBy])];
     await db.addConversationMembers(conversationId, allMembers);
-
 
     res.status(201).json({
       message: "Success",
@@ -103,7 +99,6 @@ async function createConversation(req, res) {
       title,
       membersAdded: allMembers.length
     });
-
   } catch (error) {
     console.error("Create Chat Error:", error);
     res.status(500).json({ message: "Server Error", error: error.toString() });

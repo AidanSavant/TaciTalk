@@ -20,6 +20,8 @@ class ConvoController {
     }
 
     async conversationCreated(socket, payload) {
+        console.log("conversationCreated payload:", payload);
+
         if(!socket.userId) {
             return socket.emit("error", { message: "Unauthorized User!" });
         }

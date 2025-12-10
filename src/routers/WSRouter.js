@@ -8,6 +8,11 @@ class WSRouter {
     }
 
     initRoutes(socket) {
+        if(socket.userId) {
+            socket.join(`user_${socket.userId}`);
+            console.log(`User ${socket.userId} joined room user_${socket.userId}`);
+        }
+
         socket.on("send_message", (payload) => {
             this.messageController.sendMessage(socket, payload);
         })
