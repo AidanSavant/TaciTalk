@@ -66,7 +66,7 @@ socket.on("new_message", (msg) => {
 function addMessageToUI(message) {
   const div = document.createElement("div");
 
-  const isMine = Number(message.userID) === Number(localStorage.getItem("userID"));
+  const isMine = Number(message.userID) === Number(localStorage.getItem("currentUserID"));
 
   div.className = isMine ? "msg right" : "msg";
   div.textContent = message.messageContent;
