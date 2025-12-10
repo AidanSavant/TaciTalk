@@ -115,7 +115,7 @@ createNewConvoBtn.addEventListener("click", async  (e) => {
   } else if (selectedUserIds.length > 1) {
     typeValue = "GROUP";
   }
-
+  
   
   await createNewConversation(titleValue, typeValue, selectedUserIds,userID);
   
