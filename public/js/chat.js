@@ -129,6 +129,7 @@ function addMessageToUI(message) {
 
   const nameSpan = document.createElement("span");
   nameSpan.className = "msg-username";
+  console.log(message.username)
   nameSpan.textContent = isMine ? "You" : (message.username || "Unknown");
 
   const timeSpan = document.createElement("span");

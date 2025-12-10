@@ -319,24 +319,27 @@ async function getMessagesInsideConversation(convoId) {
   chatArea.innerHTML = "";
 
   try {
-    console.log("I GOT HIT 3")
+
     const res = await fetch(`/api/conversation/${convoId}/messages`);
-    console.log("I GOT HIT 3");
+    
     if (!res.ok) throw new Error("Failed to fetch messages");
 
     const messages = await res.json();
-    console.log("I GOT HIT 3");
+
     
     messages.reverse();
 
-    messages.forEach(msg => {
+    messages.forEach(async msg => {
+      console.log(msg);
+      
+      const username = await getUsername(msg.UserID);
+      console.log("OVER HERE ITS RIGHT HERE ",username);
       
       const normalized = {
         messageID: msg.MessageID ?? msg.messageID,
         conversationID: msg.ConversationID ?? msg.conversationID,
         userID: msg.UserID ?? msg.userID,
-        username: msg.Username ?? msg.username,
-
+        username: msg.Username = await getUsername(msg.UserID),
         messageType: msg.MessageType ?? msg.messageType,
         messageContent: msg.MessageContent ?? msg.messageContent,
 
@@ -344,9 +347,9 @@ async function getMessagesInsideConversation(convoId) {
         isoTimestamp: msg.isoTimestamp
       };
       
-      console.log("I GOT HIT 4");
+     
 
-      // Use your existing UI builder from chat.js
+
       if (typeof addMessageToUI === "function") {
         addMessageToUI(normalized);
       } else {
@@ -357,12 +360,18 @@ async function getMessagesInsideConversation(convoId) {
         chatArea.appendChild(div);
       }
     });
-    console.log("I GOT HIT 5");
+    
 
     chatArea.scrollTop = chatArea.scrollHeight;
   } catch (err) {
     console.error(err);
   }
+}
+
+async function getUsername(userID) {
+  const response = await fetch(`/api/users/${userID}`);
+  const data = await response.json();
+  return data.username;
 }
 
 
