@@ -332,9 +332,6 @@ async function getMessagesInsideConversation(convoId) {
     messages.forEach(async msg => {
       console.log(msg);
       
-      const username = await getUsername(msg.UserID);
-      console.log("OVER HERE ITS RIGHT HERE ",username);
-      
       const normalized = {
         messageID: msg.MessageID ?? msg.messageID,
         conversationID: msg.ConversationID ?? msg.conversationID,
@@ -371,7 +368,8 @@ async function getMessagesInsideConversation(convoId) {
 async function getUsername(userID) {
   const response = await fetch(`/api/users/${userID}`);
   const data = await response.json();
-  return data.username;
+  console.log(data, response);
+  return data;
 }
 
 
