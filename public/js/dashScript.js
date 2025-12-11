@@ -347,24 +347,24 @@ async function getMessagesInsideConversation(convoId) {
   chatArea.innerHTML = "";
 
   try {
-    console.log("I GOT HIT 3")
+
     const res = await fetch(`/api/conversation/${convoId}/messages`);
-    console.log("I GOT HIT 3");
+
     if (!res.ok) throw new Error("Failed to fetch messages");
 
     const messages = await res.json();
-    console.log("I GOT HIT 3");
+
 
     messages.reverse();
 
-    messages.forEach(msg => {
+    messages.forEach(async msg => {
+      console.log(msg);
 
       const normalized = {
         messageID: msg.MessageID ?? msg.messageID,
         conversationID: msg.ConversationID ?? msg.conversationID,
         userID: msg.UserID ?? msg.userID,
-        username: msg.Username ?? msg.username,
-
+        username: msg.Username = await getUsername(msg.UserID),
         messageType: msg.MessageType ?? msg.messageType,
         messageContent: msg.MessageContent ?? msg.messageContent,
 
@@ -374,7 +374,6 @@ async function getMessagesInsideConversation(convoId) {
 
       console.log("I GOT HIT 4");
 
-      // Use your existing UI builder from chat.js
       if (typeof addMessageToUI === "function") {
         addMessageToUI(normalized);
         fixLoadedMessage(normalized.messageID)
@@ -384,7 +383,7 @@ async function getMessagesInsideConversation(convoId) {
         chatArea.appendChild(div);
       }
     });
-    console.log("I GOT HIT 5");
+
 
     chatArea.scrollTop = chatArea.scrollHeight;
   } catch (err) {
@@ -396,6 +395,11 @@ function fixLoadedMessage(msgID){
   const msgHandler = document.getElementById(msgID)
   msgHandler.innerHTML = "<div class=\"msgSaved\">" + msgHandler.innerText + "</div>"
   console.log("INNER HTML: " + msgHandler.innerHTML)
+async function getUsername(userID) {
+  const response = await fetch(`/api/users/${userID}`);
+  const data = await response.json();
+  console.log(data, response);
+  return data;
 }
 
 
@@ -431,4 +435,6 @@ logoutBtn.addEventListener("click", (e) => {
     console.warn("Error disconnecting socket during logout", err);
   }
   window.location.href = "/";
+});
+href = "/";
 });

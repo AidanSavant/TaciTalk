@@ -61,9 +61,6 @@ async function getUsers(req, res) {
 async function getConversationMessages(req, res) {
   try {
     const conversationID = Number(req.params.id);
-    const limit = Number(req.query.limit) || 50;
-    const offset = Number(req.query.offset) || 0;
-
     const messages = await db.getConversationMessages(conversationID);
 
     res.status(200).json(messages);

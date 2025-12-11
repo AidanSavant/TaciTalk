@@ -207,6 +207,13 @@ class DatabaseManager {
     const results = await this.executeQuery(sql, params);
     return results.affectedRows;
   }
+  
+  async getMessage(messageID) { 
+    const sql = 'SELECT * FROM MESSAGES WHERE MessageID = ?';
+    const params = [messageID];
+    const results = await this.executeQuery(sql, params);
+    return results;
+  }
 
   async getMessage(messageID) {
       const sql = 'SELECT * FROM Messages WHERE MessageID = ?';

@@ -12,12 +12,15 @@
     font-family: "Inter", sans-serif;
 }
 
+
+
 body {
     background: #0d0d0d;
     color: #e5e5e5;
     height: 100vh;
     display: flex;
     flex-direction: column;
+    overflow: hidden;
 }
 
 /* =========================================================
@@ -191,7 +194,8 @@ body {
     display: flex;
     flex-direction: column;
     height: 100%;
-    padding: 20px;
+    padding: 16px;
+    min-height: 0;
 }
 
 .chat-area {
@@ -200,6 +204,21 @@ body {
     flex-direction: column;
     overflow-y: auto;
     gap: 22px;
+    scrollbar-width: thin;
+    scrollbar-color: #555 #1a1a1a;
+}
+
+.chat-area::-webkit-scrollbar {
+  width: 10px;
+}
+.chat-area::-webkit-scrollbar-track {
+  background: #1a1a1a;
+  border-radius: 10px;
+}
+.chat-area::-webkit-scrollbar-thumb {
+  background: var(--accent-color);
+  border-radius: 10px;
+  border: 2px solid #1a1a1a;
 }
 
 .msg {
@@ -210,9 +229,10 @@ body {
     border: 1px solid #262626;
     color: #e5e5e5;
     font-size: 15px;
-    .msgSaved{
-        background: color-mix(in srgb, var(--accent-color) 50%, yellow percentage);
-    }
+}
+
+.msgSaved {
+  background: color-mix(in srgb, var(--accent-color) 50%, yellow 50%);
 }
 
 .msg.right {
@@ -234,6 +254,7 @@ body {
     justify-content: space-between;
     font-size: 11px;
     opacity: 0.75;
+    width: 100%;
     letter-spacing: 0.2px;
 }
 
@@ -259,7 +280,10 @@ body {
 .bottom-chat-area {
     display: flex;
     gap: 10px;
+    position: sticky;
+    bottom: 0;
     background: #141414;
+    padding: 8px 0;
     border-top: 1px solid #1f1f1f;
     flex-shrink: 0;
 }
