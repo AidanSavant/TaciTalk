@@ -391,10 +391,12 @@ async function getMessagesInsideConversation(convoId) {
   }
 }
 
-function fixLoadedMessage(msgID){
+function fixLoadedMessage(msgID) {
   const msgHandler = document.getElementById(msgID)
   msgHandler.innerHTML = "<div class=\"msgSaved\">" + msgHandler.innerText + "</div>"
   console.log("INNER HTML: " + msgHandler.innerHTML)
+}
+
 async function getUsername(userID) {
   const response = await fetch(`/api/users/${userID}`);
   const data = await response.json();
@@ -403,20 +405,20 @@ async function getUsername(userID) {
 }
 
 
-function highlightFromQuery() {
-  const params = new URLSearchParams(window.location.search);
-  const activeId = params.get("conversationID");
-  if (!activeId) return;
+  function highlightFromQuery() {
+    const params = new URLSearchParams(window.location.search);
+    const activeId = params.get("conversationID");
+    if (!activeId) return;
 
-  conversationlist.querySelectorAll(".conversation-item").forEach(item => {
-    item.classList.toggle("active", item.dataset.convoId === activeId);
-  });
-}
-
-
+    conversationlist.querySelectorAll(".conversation-item").forEach(item => {
+      item.classList.toggle("active", item.dataset.convoId === activeId);
+    });
+  }
 
 
-const logoutBtn = document.getElementById("logout-btn");
+
+
+  const logoutBtn = document.getElementById("logout-btn");
 
 logoutBtn.addEventListener("click", (e) => {
   e.preventDefault();
@@ -426,15 +428,13 @@ logoutBtn.addEventListener("click", (e) => {
   document.cookie = "token=; path=/; max-age=0";
 
   try {
-    if(socket && typeof socket.disconnect === "function") {
+    if (socket && typeof socket.disconnect === "function") {
       socket.disconnect();
     }
   }
 
-  catch(err) {
+  catch (err) {
     console.warn("Error disconnecting socket during logout", err);
   }
   window.location.href = "/";
-});
-href = "/";
 });
