@@ -174,7 +174,7 @@ function searchMessages(query) {
   let firstMatch = null;
 
   messages.forEach((msg) => {
-    msg.classList.remove("search-match", "search-hide");
+    msg.classList.remove("search-match", "search-hide", "search-active");
 
     if (!q) return;
 
@@ -189,7 +189,19 @@ function searchMessages(query) {
   });
 
   if (firstMatch) {
+    if (currentSearchFocus) {
+      currentSearchFocus.classList.remove("search-active");
+    }
+    firstMatch.classList.add("search-active");
+    currentSearchFocus = firstMatch;
+
     firstMatch.scrollIntoView({ behavior: "smooth", block: "center" });
+  } else {
+    // If no matches, clear focus
+    if (currentSearchFocus) {
+      currentSearchFocus.classList.remove("search-active");
+      currentSearchFocus = null;
+    }
   }
 }
 
