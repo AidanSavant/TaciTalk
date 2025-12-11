@@ -50,6 +50,17 @@ inputField.addEventListener("keypress", (e) => {
   if (e.key === "Enter") sendMessage();
 });
 
+class ioBridge { //static handler for accessing io from dashScript
+  static msgUnsave(msgID){
+    socket.emit("unsave_message",msgID)
+  }
+  static msgSave(msgID){
+    socket.emit("save_message", msgID)
+  }
+}
+socket.on("change_id", (payload) => {
+  msgClick.updateDivId(payload)
+});
 
 function sendMessage() {
   const text = inputField.value.trim();
@@ -85,7 +96,7 @@ function formatMessageTime(message) {
   }
 
   if (message.timestamp) {
-    
+
     const d1 = new Date(message.timestamp);
     if (!isNaN(d1)) {
       return new Intl.DateTimeFormat(undefined, {
@@ -96,7 +107,7 @@ function formatMessageTime(message) {
       }).format(d1);
     }
 
-    
+
     const d2 = new Date(message.timestamp.replace(" ", "T") + "Z");
     if (!isNaN(d2)) {
       return new Intl.DateTimeFormat(undefined, {
@@ -118,7 +129,7 @@ function formatMessageTime(message) {
 function addMessageToUI(message) {
   const bubble = document.createElement("div");
 
-  
+
   const currentUserId = Number(localStorage.getItem("currentUserID"));
   const isMine = Number(message.userID) === currentUserId;
 
@@ -139,16 +150,18 @@ function addMessageToUI(message) {
   meta.appendChild(nameSpan);
   meta.appendChild(timeSpan);
 
-  
+
   const text = document.createElement("div");
   text.className = "msg-text";
   text.textContent = message.messageContent;
+  text.id = message.messageID
 
   bubble.appendChild(meta);
   bubble.appendChild(text);
 
   chatArea.appendChild(bubble);
   chatArea.scrollTop = chatArea.scrollHeight;
+  msgClick.updateME(message.messageID);
 }
 
 
@@ -217,5 +230,3 @@ if (searchInput) {
     }
   });
 }
-
-
