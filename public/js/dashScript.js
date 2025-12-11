@@ -20,12 +20,8 @@ socket.on("added_to_conversation", () => {
 function updateMessageHandlers(id){
   const msgHandler = document.getElementById(id)
   msgHandler.addEventListener('click',(msg)=>{
-    console.log("msg id: "+msgHandler.id)
-    console.log("msg cont: "+msgHandler.innerText)
-    console.log("INNER HTML: "+msgHandler.innerHTML)
     if (msgHandler.innerHTML.slice(0, 22) != "<div class=\"msgSaved\">") {
       console.log(msgHandler.innerHTML.slice(0,20))
-      console.log("TEST HTML = "+"<div class=\"msgSaved\">")
       console.log("SAVING MESSAGE")
       ioBridge.msgSave(msgHandler.id)
       msgHandler.innerHTML = "<div class=\"msgSaved\">" + msgHandler.innerText + "</div>"
@@ -36,9 +32,16 @@ function updateMessageHandlers(id){
     }
   })
 }
+function updateMessageID(payload){
+  console.log("ATTEMPTING TO SWAP "+payload[0]+" WITH "+payload[1])
+  document.getElementById(payload[0]).id = payload[1]
+}
 class msgClick{ //static handler for updating messages retrieved from chat.js
   static async updateME(id){
     updateMessageHandlers(id);
+  }
+  static async updateDivId(payload){
+    updateMessageID(payload)
   }
 }
 
@@ -374,11 +377,10 @@ async function getMessagesInsideConversation(convoId) {
       // Use your existing UI builder from chat.js
       if (typeof addMessageToUI === "function") {
         addMessageToUI(normalized);
+        fixLoadedMessage(normalized.messageID)
       } else {
 
         const div = document.createElement("div");
-        div.className = "msg";
-        div.textContent = normalized.messageContent;
         chatArea.appendChild(div);
       }
     });
@@ -388,6 +390,12 @@ async function getMessagesInsideConversation(convoId) {
   } catch (err) {
     console.error(err);
   }
+}
+
+function fixLoadedMessage(msgID){
+  const msgHandler = document.getElementById(msgID)
+  msgHandler.innerHTML = "<div class=\"msgSaved\">" + msgHandler.innerText + "</div>"
+  console.log("INNER HTML: " + msgHandler.innerHTML)
 }
 
 

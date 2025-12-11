@@ -28,6 +28,9 @@ class WSRouter {
         socket.on("save_message", (payload) => {
           this.messageController.saveMessage(socket, payload);
         });
+        socket.on("unsave_message", (payload) =>{
+          this.messageController.unsaveMessage(socket, payload)
+        })
     }
 }
 

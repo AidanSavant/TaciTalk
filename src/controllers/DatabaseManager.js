@@ -68,20 +68,20 @@ class DatabaseManager {
     const results = await this.executeQuery(sql, params);
     return results[0] || null; // Return the user object or null if not found
   }
-  
+
   async getUsers() {
     const sql = "SELECT UserID, Username, Bio FROM Users";
     const results = await this.executeQuery(sql);
     return results;
   }
-  
+
   async getUsername(userID) {
     const sql = "SELECT Username FROM Users WHERE UserID = ?";
     const params = [userID];
     const results = await this.executeQuery(sql, params);
     return results[0]?.Username || null;
   }
-  
+
   async getUsernames(userIdList) {
     userIdList = userIdList.map(id => Number(id));
     if (!userIdList || userIdList.length === 0) return [];
@@ -111,7 +111,7 @@ class DatabaseManager {
 
   //Create a new Conversation
   async createConversation(title, type, createdBy) {
-    
+
     const now = new Date();
     const sql =
       "INSERT INTO Conversations (ConvoTitle, ConvoType, CreatedBy, LastUpdatedAt) VALUES (?, ?, ?, NOW())";
@@ -131,7 +131,7 @@ class DatabaseManager {
   //Read all Conversations for a User
   async getUserConversations(userID) {
     const sql = `
-      SELECT DISTINCT c.* 
+      SELECT DISTINCT c.*
       FROM Conversations c
       JOIN ConversationMembers cm ON c.ConversationID = cm.ConversationID
       WHERE cm.UserID = ?
@@ -178,10 +178,10 @@ class DatabaseManager {
       INSERT INTO Messages(timeSent, MessageType, MessageContent, SavedAt, ConversationID, UserID)
       VALUES(NOW(), ?, ?, NOW(), ?, ?)
     `;
-  
+
     const params = [messageType, messageContent, conversationID, userID];
     const results = await this.executeQuery(sql, params);
-    return results.insertId; 
+    return results.insertId;
   }
 
 
@@ -192,7 +192,7 @@ class DatabaseManager {
     const results = await this.executeQuery(sql, params);
     return results;
   }
-  
+
   async getAllMessageContent() {
     const sql = `SELECT MessageContent FROM Messages`;
     const params = [];
@@ -207,6 +207,13 @@ class DatabaseManager {
     const results = await this.executeQuery(sql, params);
     return results.affectedRows;
   }
+
+  async getMessage(messageID) {
+      const sql = 'SELECT * FROM Messages WHERE MessageID = ?';
+      const params = [messageID];
+      const results = await this.executeQuery(sql, params);
+      return results;
+    }
 
   //FRIENDSHIPS CRUD
 
@@ -277,14 +284,14 @@ class DatabaseManager {
     const params = [conversationID];
     return await this.executeQuery(sql, params);
   }
-  
+
   async addConversationMembers(conversationId, userIdList) {
       if (!userIdList || userIdList.length === 0) return;
-      
+
       const sql = "INSERT INTO ConversationMembers (ConversationID, UserID) VALUES ?";
 
       const values = userIdList.map((userId) => [conversationId, parseInt(userId)]);
-  
+
       const [results] = await this.pool.query(sql, [values]);
       return results;
     }

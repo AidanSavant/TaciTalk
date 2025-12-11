@@ -58,6 +58,9 @@ class ioBridge { //static handler for accessing io from dashScript
     socket.emit("save_message", msgID)
   }
 }
+socket.on("change_id", (payload) => {
+  msgClick.updateDivId(payload)
+});
 
 function sendMessage() {
   const text = inputField.value.trim();
@@ -150,7 +153,7 @@ function addMessageToUI(message) {
   const text = document.createElement("div");
   text.className = "msg-text";
   text.textContent = message.messageContent;
-  text.id - message.messageID
+  text.id = message.messageID
 
   bubble.appendChild(meta);
   bubble.appendChild(text);
