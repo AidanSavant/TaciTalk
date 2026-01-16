@@ -32,7 +32,6 @@ async function register(req, res) {
 async function login(req, res) {
   const { username, password } = req.body;
 
-
   if (!username || !password) {
     return res
       .status(400)
