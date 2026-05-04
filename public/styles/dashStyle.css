@@ -18,6 +18,7 @@ body {
     height: 100vh;
     display: flex;
     flex-direction: column;
+    overflow: hidden;
 }
 
 /* =========================================================
@@ -51,10 +52,8 @@ body {
     gap: 12px;
 }
 
-  
-
-
-.friend, .currentuserdisplay {
+.friend,
+.currentuserdisplay {
     padding: 10px 18px;
     background: #1f1f1f;
     border: 1px solid #2a2a2a;
@@ -110,25 +109,25 @@ body {
     margin-top: 10px;
     overflow-y: auto;
     max-height: 78vh;
-    
+
     /*so that it works on firefox*/
     scrollbar-width: thin;
     scrollbar-color: #555 #1a1a1a;
-  }
-  
-  /* so that it works on chrome type browers*/
-  .messageholder::-webkit-scrollbar {
+}
+
+/* so that it works on chrome type browers*/
+.messageholder::-webkit-scrollbar {
     width: 10px;
-  }
-  .messageholder::-webkit-scrollbar-track {
+}
+.messageholder::-webkit-scrollbar-track {
     background: #1a1a1a;
     border-radius: 10px;
-  }
-  .messageholder::-webkit-scrollbar-thumb {
+}
+.messageholder::-webkit-scrollbar-thumb {
     background: var(--accent-color);
     border-radius: 10px;
     border: 2px solid #1a1a1a;
-  }
+}
 
 /* Single conversation preview */
 .conversation-item {
@@ -148,12 +147,11 @@ body {
     border-color: var(--accent-color);
 }
 
-.conversation-item.active{
-  background: var(--accent-color);
-  color: white;
-  box-shadow: 0 0 0 1px rgba(255,255,255,0.08) inset;
+.conversation-item.active {
+    background: var(--accent-color);
+    color: white;
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.08) inset;
 }
-
 
 /* Sticky Sidebar Buttons */
 .bottom-buttons {
@@ -191,7 +189,8 @@ body {
     display: flex;
     flex-direction: column;
     height: 100%;
-    padding: 20px;
+    padding: 16px;
+    min-height: 0;
 }
 
 .chat-area {
@@ -200,6 +199,21 @@ body {
     flex-direction: column;
     overflow-y: auto;
     gap: 22px;
+    scrollbar-width: thin;
+    scrollbar-color: #555 #1a1a1a;
+}
+
+.chat-area::-webkit-scrollbar {
+    width: 10px;
+}
+.chat-area::-webkit-scrollbar-track {
+    background: #1a1a1a;
+    border-radius: 10px;
+}
+.chat-area::-webkit-scrollbar-thumb {
+    background: var(--accent-color);
+    border-radius: 10px;
+    border: 2px solid #1a1a1a;
 }
 
 .msg {
@@ -212,18 +226,65 @@ body {
     font-size: 15px;
 }
 
+.msg .msgSaved {
+    font-style: italic;
+    font-weight: bolder;
+    color:  slategray;
+    text-shadow:
+    -1px -1px 0 #000,
+    1px -1px 0 #000,
+    -1px 1px 0 #000,
+    1px 1px 0 #000;
+}
+
 .msg.right {
     margin-left: auto;
-    background: #15376e;
-    border: 1px solid var(--accent-color);
+    background: var(--accent-color);
+    border: 1px solid black;
     color: #ffffff;
+}
+
+/* --- Message meta (username + time) --- */
+.msg {
+    display: flex;
+    flex-direction: column;
+    gap: 6px; /* keeps meta + text nicely spaced */
+}
+
+.msg-meta {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    opacity: 0.75;
+    width: 100%;
+    letter-spacing: 0.2px;
+}
+
+.msg.right .msg-meta {
+    opacity: 0.9;
+}
+
+.msg-username {
+    font-weight: 600;
+}
+
+.msg-time {
+    font-variant-numeric: tabular-nums;
+}
+
+.msg-text {
+    font-size: 15px;
+    line-height: 1.35;
 }
 
 /* Bottom Message Bar */
 .bottom-chat-area {
     display: flex;
     gap: 10px;
+    position: sticky;
+    bottom: 0;
     background: #141414;
+    padding: 8px 0;
     border-top: 1px solid #1f1f1f;
     flex-shrink: 0;
 }
@@ -304,9 +365,9 @@ dialog:not(:open) {
 .user-item {
     display: inline-flex;
     align-items: center;
-    gap: 6px;            
-    margin-right: 12px;  
-    margin-bottom: 8px;  
+    gap: 6px;
+    margin-right: 12px;
+    margin-bottom: 8px;
 }
 
 .user-item:hover {
@@ -326,14 +387,13 @@ dialog:not(:open) {
     color: #fff;
 }
 
-#createBtn{
+#createBtn {
     background: var(--accent-color);
     color: white;
 }
-#submitEdit{
+#submitEdit {
     background: var(--accent-color);
     color: white;
-    
 }
 
 #submitEdit:hover {
@@ -350,7 +410,8 @@ dialog:not(:open) {
 #createBtn:active {
     transform: scale(0.97);
 }
-#closeBtn, #cancelBtn {
+#closeBtn,
+#cancelBtn {
     background: #2c2c2c;
     color: #ddd;
     margin-left: 8px;
@@ -358,7 +419,7 @@ dialog:not(:open) {
 #closeBtn:hover {
     background: #383838;
 }
-#cancelBtn:hover{
+#cancelBtn:hover {
     background: var(--accent-color);
 }
 
@@ -405,3 +466,37 @@ dialog:not(:open) {
         display: none;
     }
 }
+
+
+
+.msg.search-hide {
+  opacity: 0.3;
+  filter: grayscale(0.8);
+}
+
+
+.msg.search-match {
+  background: #262626;
+  border-radius: 8px;
+  transition: background 0.2s, box-shadow 0.2s;
+}
+
+
+.msg.search-active {
+  box-shadow: 0 0 0 2px var(--accent-color);
+  background: #303030;
+  animation: search-pulse 0.7s ease-out;
+}
+
+@keyframes search-pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.01);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+

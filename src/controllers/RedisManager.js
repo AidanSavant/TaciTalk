@@ -18,6 +18,16 @@ class RedisManager {
       });
   }
 
+  async flush(){ //DEBUG!!!
+    await this.client.flushAll('SYNC');
+  }
+  async showALL(){ //DEBUG!!!
+    const keys = await this.client.keys('*');
+    for (var i = 0; i < keys.length; i++){
+      console.log(JSON.stringify(await this.getMessage(keys[i])))
+    }
+  }
+
   async connect() {
     await this.client.connect();
     console.log("Connected to Redis");
@@ -32,11 +42,27 @@ class RedisManager {
     return this.client.json.get(messageID, { path: "$" });
   }
 
+  async returnFromConvo(conversationID){ //nonperformant
+    //compares all messages with a given conversationID
+    //If message contains said ID, will append to a json array
+    const msgs = await this.client.keys('*')
+    let msgFromConv = []
+    msgs.forEach(async (msg)=>{
+      //const convID = await this.client.json.get(msg, { path: `$.conversationID[?@==${conversationID}` });
+      const convID = await this.client.json.get(msg, { path: '$' });
+      if (convID.conversationID == conversationID){
+        msgFromConv.push(convID)
+      }
+    })
+    //returns array of matched messages, can return an empty array
+    return msgFromConv
+  }
+
   async editMessage(messageID, messageType, messageContent) {
     const oldMsg = await this.getMessage(messageID);
     oldMsg.messageType = messageType;
     oldMsg.messageContent = messageContent;
-    
+
     return this.client.json.set(messageID, "$", oldMsg);
   }
 

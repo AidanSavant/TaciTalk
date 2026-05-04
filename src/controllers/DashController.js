@@ -58,6 +58,18 @@ async function getUsers(req, res) {
   }
 }
 
+async function getConversationMessages(req, res) {
+  try {
+    const conversationID = Number(req.params.id);
+    const messages = await db.getConversationMessages(conversationID);
+
+    res.status(200).json(messages);
+  } catch (err) {
+    console.error("Get Conversation Messages Error:", err);
+    res.status(500).json({ message: "Server Error" });
+  }
+}
+
 
 async function getUserFriends(req, res) { 
   try {
@@ -147,4 +159,5 @@ export default {
   updateBio,
   getConversationUsers,
   getUserById,
+  getConversationMessages,
 };
